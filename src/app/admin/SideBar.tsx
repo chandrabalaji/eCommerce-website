@@ -1,0 +1,40 @@
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React from "react";
+// import MenuIcon from "@mui/icons-material/Menu";
+
+const SideBar = () => {
+  const pathName = usePathname();
+
+  const sideBarLinks = [
+    { id: 1, name: "Category", href: "/admin" },
+    { id: 2, name: " Products", href: "/admin/product-list" },
+    { id: 3, name: " Orders", href: "/admin/Orders" },
+    { id: 4, name: " Customers", href: "/admin/Customers" },
+  ];
+
+  return (
+    <>
+      <div className="flex items-center gap-2 ">
+        <p className="text-2xl tracking-wide">LAMA</p>
+      </div>
+      <aside className="flex flex-col gap-4 items-start  py-3 rounded-md w-full mt-3">
+        {sideBarLinks.map((menu) => (
+          <Link
+            className={` ${
+              pathName == menu?.href ? "bg-pink-400" : ""
+            }  text-center p-2 px-3 w-full rounded-md`}
+            href={menu?.href}
+            key={menu?.id}
+          >
+            {menu?.name}
+          </Link>
+        ))}
+      </aside>
+      {/* <MenuIcon />/ */}
+    </>
+  );
+};
+
+export default SideBar;

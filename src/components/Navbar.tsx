@@ -29,8 +29,6 @@ const Navbar = () => {
             <Link href="/">Deals</Link>
             <Link href="/">About</Link>
             <Link href="/">Contact</Link>
-            <Link href="/">Logout</Link>
-            <Link href="/">Cart(1)</Link>
           </div>
         </div>
         {/* RIGHT */}
@@ -38,6 +36,12 @@ const Navbar = () => {
           <SearchBar />
           <NavIcons />
         </div>
+        <Link
+          href="/admin"
+          className=" border border-pink-500 text-pink-500 p-2 px-4 rounded-md hover:text-white hover:bg-pink-500"
+        >
+          Admin
+        </Link>
       </div>
     </div>
   );
