@@ -1,6 +1,8 @@
 import SearchBar from "@/components/SearchBar";
 import React from "react";
 import Image from "next/image";
+import HomeIcon from "@mui/icons-material/Home";
+import Link from "next/link";
 
 const Header = () => {
   return (
@@ -9,14 +11,18 @@ const Header = () => {
         <SearchBar />
       </div>
       <div className="flex items-center gap-2">
-        <Image
-          src="https://images.pexels.com/photos/25365159/pexels-photo-25365159/free-photo-of-blue-mug-with-plants.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
-          width={30}
-          height={25}
-          alt=""
-          className="rounded-full"
-        />
+        <div className="relative w-10 h-10 rounded-full overflow-hidden">
+          <Image
+            src="https://images.pexels.com/photos/25365159/pexels-photo-25365159/free-photo-of-blue-mug-with-plants.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
+            layout="fill"
+            objectFit="cover"
+            alt=""
+          />
+        </div>
         <p>Henry Klein</p>
+        <Link href="/">
+          <HomeIcon />
+        </Link>
       </div>
     </header>
   );

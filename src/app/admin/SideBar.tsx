@@ -2,13 +2,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
-// import MenuIcon from "@mui/icons-material/Menu";
+import MenuIcon from "@mui/icons-material/Menu";
 
 const SideBar = () => {
   const pathName = usePathname();
 
   const sideBarLinks = [
-    { id: 1, name: "Category", href: "/admin" },
+    { id: 1, name: "Category", href: "/admin/categories-list" },
     { id: 2, name: " Products", href: "/admin/product-list" },
     { id: 3, name: " Orders", href: "/admin/Orders" },
     { id: 4, name: " Customers", href: "/admin/Customers" },
@@ -16,8 +16,9 @@ const SideBar = () => {
 
   return (
     <>
-      <div className="flex items-center gap-2 ">
+      <div className="flex items-center justify-between gap-2 ">
         <p className="text-2xl tracking-wide">LAMA</p>
+        <MenuIcon />
       </div>
       <aside className="flex flex-col gap-4 items-start  py-3 rounded-md w-full mt-3">
         {sideBarLinks.map((menu) => (
@@ -32,7 +33,6 @@ const SideBar = () => {
           </Link>
         ))}
       </aside>
-      {/* <MenuIcon />/ */}
     </>
   );
 };
