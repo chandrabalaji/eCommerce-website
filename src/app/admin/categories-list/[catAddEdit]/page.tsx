@@ -1,10 +1,12 @@
 "use client";
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
+import Link from "next/link";
 import React, { useState } from "react";
 
 const page = () => {
   const [open, setOpen] = React.useState(false);
   const [categoryName, setCategoryName] = useState("Category 1");
+
   return (
     <div className=" ">
       <div
@@ -24,9 +26,12 @@ const page = () => {
           />
         </div>
         <div className="flex items-center gap-5">
-          <button className=" border border-white text-black min-w-32 py-2 rounded-3xl">
+          <Link
+            href="/admin/categories-list"
+            className=" border border-white text-black min-w-32 py-2 rounded-3xl w-full text-center hover:bg-gray-900 hover:border-gray-900 hover:text-white"
+          >
             Cancel
-          </button>
+          </Link>
           <button className="bg-white text-black min-w-32 py-2 rounded-3xl">
             Save
           </button>

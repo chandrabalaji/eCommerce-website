@@ -39,17 +39,19 @@ const page = () => {
           <p className="text-3xl">categories</p>
           <p>Groups Related Productes into Categories add them to your site.</p>
         </div>
-        <button className="bg-pink-400 px-6 py-2 rounded-3xl text-white">
-          {" "}
+        <Link
+          href="categories-list/add"
+          className="bg-pink-400 px-6 py-2 rounded-3xl text-white"
+        >
           + Add Category
-        </button>
+        </Link>
       </div>
       <section className="flex items-center flex-wrap gap-10 ">
         {categoriesList.map((category) => (
           <Link
             className="w-[350px] h-72 relative rounded-md overflow-hidden "
             key={category.id}
-            href={`categories-list/add=${category.id}`}
+            href={`categories-list/edit=${category.id}`}
           >
             <Image
               src={category.cat_img}

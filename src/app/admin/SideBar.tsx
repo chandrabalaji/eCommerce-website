@@ -24,7 +24,7 @@ const SideBar = () => {
         {sideBarLinks.map((menu) => (
           <Link
             className={` ${
-              pathName == menu?.href ? "bg-pink-400" : ""
+              pathName.includes(menu?.href) ? "bg-pink-400" : ""
             }  text-center p-2 px-3 w-full rounded-md`}
             href={menu?.href}
             key={menu?.id}
