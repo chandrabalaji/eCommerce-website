@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "@fontsource/josefin-sans/400.css"; /* regular */
+@import "@fontsource/josefin-sans/600.css"; /* semi-bold or others as needed */
+
+@font-face {
+  font-family: "Rollgates Luxury";
+  src: url("/fonts/RollgatesLuxury.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+.scroll-bar-hide ::-webkit-scrollbar {
+  display: none;
+}
+.scroll-bar-hide {
+  scrollbar-width: none;
+}
+
+.cutom-offer-grid-style {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  div {
+    // background-color: rgb(219, 228, 228);
+    // border: 1px solid;
+  }
+  .span-2 {
+    grid-column: span 2;
+  }
+  .span-3 {
+    grid-column: span 3;
+  }
+
+}

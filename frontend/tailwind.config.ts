@@ -8,6 +8,13 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        rollgates: ["Rollgates Luxury", "sans-serif"],
+        josefin: ["Josefin Sans", "sans-serif"],
+      },
+      colors: {
+        "orange-400": "#BE7F4E",
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
