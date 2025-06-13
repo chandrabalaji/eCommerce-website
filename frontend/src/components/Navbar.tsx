@@ -33,12 +33,12 @@ const Navbar = () => {
           {/* <SearchBar /> */}
           <NavIcons />
         </div>
-       {/*  <Link
+        <Link
           href="/admin/categories-list"
           className=" border border-pink-500 text-pink-500 p-2 px-4 rounded-md hover:text-white hover:bg-pink-500"
         >
           Admin
-        </Link> */}
+        </Link>
       </div>
     </div>
   );

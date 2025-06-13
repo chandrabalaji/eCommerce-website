@@ -7,7 +7,15 @@ export const getCategories = async (req, res) => {
     if (err) {
       return res.status(500).json({ error: "Database error" });
     }
-    res.status(200).json({ data: results });
+    res.status(200).json({
+      data: results,
+      status: "success",
+      message: "Categories fetched successfully",
+      timestamp: Date.now(),
+      meta: {
+        totalCount: results?.length,
+      },
+    });
   });
 };
 
@@ -25,9 +33,11 @@ export const addCategory = async (req, res) => {
         console.error(err);
         return res.status(500).json({ error: err?.sqlMessage });
       }
-      res
-        .status(201)
-        .json({ message: "category added", userId: results.insertId });
+      res.status(201).json({
+        message: "category added",
+        userId: results.insertId,
+        status: "success",
+      });
     } catch (error) {
       res.send(error.message);
     }
@@ -35,10 +45,11 @@ export const addCategory = async (req, res) => {
 };
 
 export const updateCategory = async (req, res) => {
-  const { id } = req.params.id;
+  const { id } = req.params;
   const { name } = req.body;
+
   //  Validate ID is a valid number
-  if (isNaN(userId)) {
+  if (isNaN(id)) {
     return res
       .status(400)
       .json({ error: "Invalid  category ID. It must be a number." });
@@ -71,6 +82,9 @@ export const deleteCategory = async (req, res) => {
     if (results.affectedRows === 0) {
       return res.status(404).json({ error: " category not founnd" });
     }
-    res.json({ message: "category deleted!" });
+    res.json({
+      message: "category deleted!",
+      status: "success",
+    });
   });
 };

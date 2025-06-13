@@ -2,10 +2,39 @@
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
 import Link from "next/link";
 import React, { useState } from "react";
+import { postCategory, updateCategory } from "../../../../lib/api/apiService";
+import { useSearchParams } from "next/navigation";
+import { toast } from "react-hot-toast";
 
-const page = () => {
+const page = ({ params }: { params: { catAddEdit: string } }) => {
+  const editCategoryId = useSearchParams()?.get("edit") ?? null;
+  const editCategoryName = params?.catAddEdit;
+
   const [open, setOpen] = React.useState(false);
-  const [categoryName, setCategoryName] = useState("Category 1");
+  const [categoryName, setCategoryName] = useState(
+    editCategoryId ? editCategoryName : "Category 1"
+  );
+
+  const handlePost = async () => {
+    if (editCategoryId) {
+      const { status, data }: any = await updateCategory({
+        id: editCategoryId,
+        name: categoryName,
+      });
+
+      if (status === 200) {
+        toast.success(data?.message);
+      }
+    } else {
+      const { data, status }: any = await postCategory({
+        name: categoryName,
+      });
+
+      if (status === 201) {
+        toast.success(data?.message);
+      }
+    }
+  };
 
   return (
     <div className=" ">
@@ -32,7 +61,10 @@ const page = () => {
           >
             Cancel
           </Link>
-          <button className="bg-white text-black min-w-32 py-2 rounded-3xl">
+          <button
+            className="bg-white text-black min-w-32 py-2 rounded-3xl"
+            onClick={handlePost}
+          >
             Save
           </button>
         </div>
