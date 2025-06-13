@@ -4,13 +4,13 @@ import React from "react";
 
 const Footer = () => {
   return (
-    <div className="py-24 px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 bg-gray-100 text-sm mt-24">
+    <div className="py-24 px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 bg-[#F9F2ED] text-sm mt-24">
       {/* TOP */}
       <div className="flex flex-col md:flex-row justify-between gap-24">
         {/* LEFT  */}
         <div className="w-full md:w-1/2 lg:w-1/4 flex flex-col gap-8">
           <Link href="/">
-            <div className="text-2xl tracking-wide">LAMA</div>
+           <div className="text-2xl tracking-widest font-rollgates font-normal">FASHION WEAR</div>
           </Link>
           <p>
             98, Lorem ipsum dolor sit amet consectetur, adipisicing elit. Velit
@@ -69,7 +69,7 @@ const Footer = () => {
               placeholder="Email address"
               className="p-4 w-3/4"
             />
-            <button className="w-1/4 bg-pink-500 text-white">JOIN</button>
+            <button className="w-1/4 bg-orange-400 text-white">JOIN</button>
           </div>
           <span className="font-semibold">Secure Payments</span>
           <div className="flex justify-between">

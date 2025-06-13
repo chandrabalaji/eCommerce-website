@@ -5,11 +5,12 @@ import React, { useEffect, useState } from "react";
 const slides = [
   {
     id: 1,
-    title: "Summer Sale Collections",
-    description: "Sale! Up to 50% off!",
-    img: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800",
+    title: "A personalized outfit shopping experience",
+    description: "Upto 30% off",
+    // img: "https://images.pexels.com/photos/1926769/pexels-photo-1926769.jpeg?auto=compress&cs=tinysrgb&w=800",
+    img: "/homeBanner.png",
     url: "/",
-    bg: "bg-gradient-to-r from-yellow-50 to-pink-50",
+    bg: "bg-gradient-to-r from-yellow-50 to-pink-50 text-white",
   },
   {
     id: 2,
@@ -28,6 +29,7 @@ const slides = [
     bg: "bg-gradient-to-r from-blue-50 to-yellow-50",
   },
 ];
+
 const Slider = () => {
   const [current, setCurrent] = useState(0);
 
@@ -46,15 +48,22 @@ const Slider = () => {
       >
         {slides.map((slide) => (
           <div
-            className={`${slide.bg} w-screen h-full flex flex-col gap-16 xl:flex-row`}
+            className={`${slide.bg} w-screen h-full flex flex-col gap-16 xl:flex-row relative`}
             key={slide.id}
           >
             {/* TEXT CONTAINER  */}
-            <div className="h-1/2 xl:w-1/2 xl:h-full flex flex-col items-center justify-center gap-8 2xl:gap-12 text-center">
+
+            <div
+              className={` ${
+                slide?.id == 1
+                  ? "absolute top-52 left-[550px] max-w-[800px] z-10"
+                  : "xl:w-1/2 flex flex-col"
+              } h-1/2  xl:h-full  items-center justify-center gap-8 2xl:gap-12 text-center font-josefin`}
+            >
               <h2 className="text-xl lg:text-3xl 2xl:text-5xl">
                 {slide.description}
               </h2>
-              <h1 className="text-5xl lg:text-6xl 2xl:text-8xl font-semibold">
+              <h1 className="text-5xl lg:text-6xl 2xl:text-8xl font-semibold ">
                 {slide.title}
               </h1>
               <Link href={slide.url}>
@@ -63,8 +72,13 @@ const Slider = () => {
                 </button>
               </Link>
             </div>
+
             {/* IMAGE CONTAINER  */}
-            <div className="h-1/2 xl:w-1/2 xl:h-full relative">
+            <div
+              className={`${
+                slide?.id == 1 ? "xl:w-full" : "xl:w-1/2"
+              } h-1/2  xl:h-full relative`}
+            >
               <Image
                 src={slide.img}
                 alt=""
