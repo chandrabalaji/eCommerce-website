@@ -1,6 +1,7 @@
 import express from "express";
 import { connectMysqlDb, db } from "./config/db.js";
 import categories from "./routes/categoryRoutes.js";
+import products from "./routes/productRoutes.js";
 import cors from 'cors';
 
 const app = express();
@@ -10,6 +11,7 @@ connectMysqlDb();
 app.use(cors());
 app.use(express.json());
 app.use(categories);
+app.use(products);
 
 // -------------------- $------------------------------
 // catch-all invalid Route

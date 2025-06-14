@@ -5,21 +5,31 @@ import { deleteCategory, getCategories } from "@/lib/api/apiService";
 import { useEffect, useState } from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { toast } from "react-hot-toast";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const page = () => {
+  const queryClient = useQueryClient();
   const [categoriesDetails, setCategoriesDetails] = useState<any>(null);
 
-  const getCategoriesDetails = async () => {
-    const { data } = await getCategories();
-    setCategoriesDetails(data);
-  };
-  useEffect(() => {
-    getCategoriesDetails();
-  }, []);
+  // Queries
+  const { data } = useQuery({
+    queryKey: ["categoriesDetails"],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getCategories(),
+  });
 
-  const handleDeleteCategory = async (id: number) => {
+  useEffect(() => {
+    setCategoriesDetails(data?.data);
+  }, [data]);
+
+  /* const handleDeleteCategory = async (id: number) => {
     try {
-      const { data, status }: any = await deleteCategory(id);
+      // const { data, status }: any = await deleteCategory(id);
+
+      const { data, status }: any = useMutation({
+         mutationFn: (id: number) => deleteCategory(id),
+      })
       if (status === 200) {
         toast.success(data?.message);
         getCategoriesDetails();
@@ -27,8 +37,16 @@ const page = () => {
     } catch (error) {
       console.log(error);
     }
-  };
+  }; */
 
+  // Mutation for deleting a student
+  const { mutate: handleDeleteCategory } = useMutation({
+    mutationFn: (id: number) => deleteCategory(id),
+    onSuccess: (data: any) => {
+      toast.success(data?.data?.message);
+      queryClient.invalidateQueries({ queryKey: ["categoriesDetails"] });
+    },
+  });
   const categoriesList = [
     {
       id: 1,

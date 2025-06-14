@@ -1,5 +1,5 @@
-import { db } from "../config/db";
-
+import { db } from "../config/db.js";
+import { validateRequiredFields } from "../utils/validateFields.js";
 const requiredFields = ["name", "price", "category_id"];
 
 export const getProducts = async (req, res) => {
@@ -31,7 +31,7 @@ export const addProduct = async (req, res) => {
   if (!validation.valid) {
     return res.status(400).json({
       error: "Some fields are missing",
-      missingFields,
+      missingFields: validation?.missingFields,
       status: 400,
     });
   }

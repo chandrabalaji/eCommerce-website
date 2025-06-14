@@ -4,11 +4,13 @@ import {
   deleteProduct,
   getProducts,
   updateProduct,
-} from "../controllers/productController";
+} from "../controllers/productController.js";
 
-const router = express.Router();
+const products = express.Router();
 
-router.get("/api/products", getProducts);
-router.post("/api/products", addProduct);
-router.put("/api/products/:id", updateProduct);
-router.delete("/api/products/:id", deleteProduct);
+products.get("/api/products", getProducts);
+products.post("/api/products", addProduct);
+products.put("/api/products/:id", updateProduct);
+products.delete("/api/products/:id", deleteProduct);
+
+export default products;

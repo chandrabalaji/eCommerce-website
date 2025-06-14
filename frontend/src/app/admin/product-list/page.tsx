@@ -41,7 +41,7 @@ const page = () => {
           <p>Groups Related Productes into Categories add them to your site.</p>
         </div>
         <Link
-          href="categories-list/add"
+          href="/admin/product-list/add"
           className="bg-pink-400 px-6 py-2 rounded-3xl text-white"
         >
           + Add product

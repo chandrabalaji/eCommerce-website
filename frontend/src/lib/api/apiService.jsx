@@ -40,3 +40,17 @@ export const deleteCategory = async (id) => {
     console.log(error);
   }
 };
+
+/*  */
+export const postProduct = async (params) => {
+  try {
+    const res = await Axios.post(API_ROUTES.PRODUCTS, params, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};

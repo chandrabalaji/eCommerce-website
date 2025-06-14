@@ -16,20 +16,14 @@ export default function AdminLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <div className="flex">
-          <div className="bg-gray-900 text-white w-1/6 h-screen p-2">
-            <SideBar />
-          </div>
-          <div className="w-5/6">
-            <Header />
-            <div className="max-h-[calc(100vh-64px)] overflow-auto">
-              {children}
-            </div>
-          </div>
-        </div>
-      </body>
-    </html>
+    <div className="flex">
+      <div className="bg-gray-900 text-white w-1/6 h-screen p-2">
+        <SideBar />
+      </div>
+      <div className="w-5/6">
+        <Header />
+        <div>{children}</div>
+      </div>
+    </div>
   );
 }

@@ -1,3 +1,4 @@
+'use client'
 import SearchBar from "@/components/SearchBar";
 import React from "react";
 import Image from "next/image";
