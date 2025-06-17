@@ -25,6 +25,7 @@ export const addProduct = async (req, res) => {
   // Add logic
   //name price category_id
   const { name, price, category_id } = req.body;
+  const productImages = req.files;
 
   const validation = validateRequiredFields(req.body, requiredFields);
 
@@ -36,17 +37,34 @@ export const addProduct = async (req, res) => {
     });
   }
 
-  const sql = "INSERT INTO productlist(name,price,category_id) VALUES (?,?,?) ";
+  const sql = "INSERT INTO products(name,price,category_id) VALUES (?,?,?)";
 
   try {
-    db.query(sql, [name, price, category_id], (err, results) => {
+    db.execute(sql, [name, price, category_id], async (err, results) => {
       if (err) {
-        return res.status(500).json({ error: "Database error" });
+        console.log(err);
+        return res
+          .status(500)
+          .json({ error: err?.sqlMessage || "Database error" });
       }
 
+      const productId = results.insertId;
+      console.log(productId);
+
+      const insertImages = productImages.map((file, index) => {
+        const filePath = file.path;
+        const isPrimary = index == 0 ? true : false;
+        const sql =
+          "INSERT INTO product_images(product_id,image_url,is_primary) VALUES(? , ?, ?) ";
+        return db.query(sql, [productId, filePath, isPrimary]);
+        
+      });
+      console.log(insertImages);
+
+      await Promise.all(insertImages);
       res.json({
         message: "product added",
-        userId: results.insertId,
+        insertId: results.insertId,
         status: "success",
       });
     });

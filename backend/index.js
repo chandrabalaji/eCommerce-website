@@ -2,11 +2,11 @@ import express from "express";
 import { connectMysqlDb, db } from "./config/db.js";
 import categories from "./routes/categoryRoutes.js";
 import products from "./routes/productRoutes.js";
-import cors from 'cors';
+import cors from "cors";
 
 const app = express();
 const PORT = 9000;
-connectMysqlDb();
+await connectMysqlDb();
 
 app.use(cors());
 app.use(express.json());

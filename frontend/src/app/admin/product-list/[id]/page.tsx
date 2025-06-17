@@ -44,17 +44,11 @@ const page = ({ params }: { params: { id: string } }) => {
       }
     } else {
       const formData = new FormData();
-      formData.append(
-        "product",
-        JSON.stringify({
-          name: productName,
-          price,
-          category_id: selectedCategory?.id,
-        })
-      );
-
+      formData.append("name", productName);
+      formData.append("price", String(price));
+      formData.append("category_id", selectedCategory?.id);
       for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]); // 'images' is the key for multiple files
+        formData.append("images", images[i]?.file); // 'images' is the key for multiple files
       }
 
       const { data, status }: any = await postProduct(formData);
