@@ -1,37 +1,35 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { deleteProduct, getProducts } from "@/lib/api/apiService";
+import { SERVER_URL } from "@/constant";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import toast from "react-hot-toast";
 
 const page = () => {
-  const productList = [
-    {
-      id: 1,
-      name: "Shirt",
-      size: "28 - 36",
-      cat_img:
-        "https://images.pexels.com/photos/25365159/pexels-photo-25365159/free-photo-of-blue-mug-with-plants.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load",
+  const queryClient = useQueryClient();
+  const [productDetails, setProductDetails] = useState<any>(null);
+
+  const { data } = useQuery({
+    queryKey: ["productDetails"],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getProducts(),
+  });
+  useEffect(() => {
+    setProductDetails(data?.data);
+  }, [data]);
+
+  // Mutation
+  const { mutate: handleDeleteProduct } = useMutation({
+    mutationFn: (id: number) => deleteProduct(id),
+    onSuccess: (data: any) => {
+      toast.success(data?.data?.message);
+      queryClient.invalidateQueries({ queryKey: ["productDetails"] });
     },
-    {
-      id: 2,
-      name: "T-shirt",
-      size: "28 - 36",
-      cat_img:
-        "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-    {
-      id: 3,
-      name: "Kurti",
-      size: "28 - 36",
-      cat_img:
-        "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-    {
-      id: 4,
-      name: "Shorts",
-      size: "28 - 36",
-      cat_img:
-        "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-  ];
+  });
 
   return (
     <div className="flex flex-col gap-3 px-10 py-4 w-full ">
@@ -48,21 +46,34 @@ const page = () => {
         </Link>
       </div>
       <section className="flex items-center flex-wrap gap-10 ">
-        {productList?.map((product) => (
+        {productDetails?.map((product: any) => (
           <Link
-            className="w-[350px] h-72 relative rounded-md overflow-hidden "
+            className="w-[300px] h-72 relative rounded-md overflow-hidden "
             key={product.id}
-            href={`categories-list/edit=${product.id}`}
+            href={`product-list/${product.name}?edit=${product.id}`}
           >
             <Image
-              src={product.cat_img}
+              src={`${SERVER_URL}/${product.image_urls[0]}`}
               layout="fill"
               objectFit="cover"
               alt=""
             ></Image>
-            <p className="absolute bottom-5 left-5 text-2xl text-white ">
-              {product.name} {product.size}
-            </p>
+            <div className="bg-gradient-to-b from-gray-300 via-gray-400 to-gray-400 w-full absolute bottom-0 left-0 p-2">
+              <div className="text-2xl text-white  flex justify-between items-center ">
+                <span>{product.name}</span> <span>$ {product.price}</span>
+              </div>
+              <p>{product?.category_name}</p>
+            </div>
+            <button
+              className="bg-red-500 p-2 rounded-full absolute right-2 top-2 opacity-0 hover:opacity-100"
+              onClick={(e) => {
+                e.preventDefault(); // prevent <Link> navigation
+                e.stopPropagation(); // prevent bubbling to <Link>
+                handleDeleteProduct(product.id);
+              }}
+            >
+              <DeleteForeverIcon />
+            </button>
           </Link>
         ))}
       </section>

@@ -3,10 +3,8 @@ import { db } from "../config/db.js";
 export const getCategories = async (req, res) => {
   const sql = "SELECT * FROM  categories";
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
+  try {
+    const [results] = await db.query(sql);
     res.status(200).json({
       data: results,
       status: "success",
@@ -16,7 +14,10 @@ export const getCategories = async (req, res) => {
         totalCount: results?.length,
       },
     });
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
 };
 
 export const addCategory = async (req, res) => {
@@ -27,21 +28,17 @@ export const addCategory = async (req, res) => {
   }
 
   const sql = "INSERT INTO categories(name) VALUES (?)";
-  db.query(sql, [name], (err, results) => {
-    try {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: err?.sqlMessage });
-      }
-      res.status(201).json({
-        message: "category added",
-        userId: results.insertId,
-        status: "success",
-      });
-    } catch (error) {
-      return res.status(500).json({ error: error?.message });
-    }
-  });
+  try {
+    const [categoryResult] = await db.query(sql, [name]);
+    res.status(201).json({
+      message: "category added",
+      userId: categoryResult.insertId,
+      status: "success",
+    });
+  } catch (error) {
+    console.error(err);
+    return res.status(500).json({ error: err?.sqlMessage });
+  }
 };
 
 export const updateCategory = async (req, res) => {
@@ -56,16 +53,18 @@ export const updateCategory = async (req, res) => {
   }
 
   const sql = "UPDATE categories SET name = ?  WHERE id = ?";
-  db.query(sql, [name, id], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: err?.sqlMessage });
-    }
+  try {
+    const [results] = await db.execute(sql, [name, id]);
+
     if (results.affectedRows === 0) {
-      res.status(404).json({ message: "category not found" });
+      return res.status(404).json({ message: "category not found" });
     }
-    res.json({ message: "category updated!", status: "success", });
-  });
+
+    res.json({ message: "category updated!", status: "success" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err?.sqlMessage || "Database error" });
+  }
 };
 
 export const deleteCategory = async (req, res) => {
@@ -75,16 +74,18 @@ export const deleteCategory = async (req, res) => {
     return res.status(400).json({ error: "id must br number" });
   }
   const sql = "DELETE FROM categories WHERE id = ?";
-  db.query(sql, [id], (err, results) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
+  try {
+    const [results] = await db.execute(sql, [id]);
+
     if (results.affectedRows === 0) {
-      return res.status(404).json({ error: " category not founnd" });
+      return res.status(404).json({ error: "category not found" });
     }
+
     res.json({
       message: "category deleted!",
       status: "success",
     });
-  });
+  } catch (err) {
+    res.status(500).json({ error: err?.message || "Database error" });
+  }
 };

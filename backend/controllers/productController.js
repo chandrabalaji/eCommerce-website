@@ -3,12 +3,25 @@ import { validateRequiredFields } from "../utils/validateFields.js";
 const requiredFields = ["name", "price", "category_id"];
 
 export const getProducts = async (req, res) => {
-  const sql = "SELECT * FROM productlist";
+  const sql = `SELECT
+    p.name,
+    p.id,
+    p.price,
+    p.category_id,
+     JSON_ARRAYAGG(IMG.image_url) AS image_urls,
+    CAT.name AS category_name
+  FROM 
+    products p
+  JOIN
+    product_images IMG ON p.id = IMG.product_id
+  JOIN
+    categories CAT ON p.category_id = CAT.id
+  GROUP BY 
+    p.id`;
 
-  db.query(sql, (err, results) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
+  try {
+    const [results] = await db.execute(sql);
+
     res.status(200).json({
       data: results,
       status: "success",
@@ -18,7 +31,52 @@ export const getProducts = async (req, res) => {
         totalCount: results?.length,
       },
     });
-  });
+  } catch (err) {
+    res.status(500).json({ error: "Database error", details: err?.message });
+  }
+};
+
+export const getProduct = async (req, res) => {
+  const { id } = req.params;
+  const sql = `SELECT
+    p.name,
+    p.id,
+    p.price,
+    p.category_id,
+     JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'url', IMG.image_url,
+        'name', IMG.image_url
+      )
+    ) AS image_urls,
+    CAT.name AS category_name
+  FROM 
+    products p
+  JOIN
+    product_images IMG ON p.id = IMG.product_id
+  JOIN
+    categories CAT ON p.category_id = CAT.id
+  WHERE 
+      p.id = ?
+  GROUP BY 
+    p.id 
+    `;
+
+  try {
+    const [results] = await db.execute(sql, [id]);
+
+    res.status(200).json({
+      data: results,
+      status: "success",
+      message: "products fetched successfully",
+      timestamp: Date.now(),
+      meta: {
+        totalCount: results?.length,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Database error", details: err?.message });
+  }
 };
 
 export const addProduct = async (req, res) => {
@@ -40,33 +98,22 @@ export const addProduct = async (req, res) => {
   const sql = "INSERT INTO products(name,price,category_id) VALUES (?,?,?)";
 
   try {
-    db.execute(sql, [name, price, category_id], async (err, results) => {
-      if (err) {
-        console.log(err);
-        return res
-          .status(500)
-          .json({ error: err?.sqlMessage || "Database error" });
-      }
+    const [productResult] = await db.query(sql, [name, price, category_id]);
 
-      const productId = results.insertId;
-      console.log(productId);
+    const productId = productResult.insertId;
 
-      const insertImages = productImages.map((file, index) => {
-        const filePath = file.path;
-        const isPrimary = index == 0 ? true : false;
-        const sql =
-          "INSERT INTO product_images(product_id,image_url,is_primary) VALUES(? , ?, ?) ";
-        return db.query(sql, [productId, filePath, isPrimary]);
-        
-      });
-      console.log(insertImages);
-
-      await Promise.all(insertImages);
-      res.json({
-        message: "product added",
-        insertId: results.insertId,
-        status: "success",
-      });
+    const insertImages = productImages.map((file, index) => {
+      const filePath = file.path;
+      const isPrimary = index == 0 ? true : false;
+      const sql =
+        "INSERT INTO product_images(product_id,image_url,is_primary) VALUES(? , ?, ?) ";
+      return db.query(sql, [productId, filePath, isPrimary]);
+    });
+    await Promise.all(insertImages);
+    res.status(201).json({
+      message: "product added",
+      insertId: productResult.insertId,
+      status: "success",
     });
   } catch (error) {
     return res.status(500).json({ error: error?.message });
@@ -82,7 +129,7 @@ export const updateProduct = async (req, res) => {
   if (isNaN(id)) {
     return res
       .status(400)
-      .json({ error: "Invalid  category ID. It must be a number." });
+      .json({ error: "Invalid  product ID. It must be a number." });
   }
 
   const validation = validateRequiredFields(req.body, requiredFields);
@@ -99,17 +146,19 @@ export const updateProduct = async (req, res) => {
     "UPDATE productlist SET name = ? , price = ? , category_id = ?  WHERE id = ?";
 
   try {
-    db.query(sql, [name, price, category_id, id], (err, results) => {
-      if (err) {
-        return res.status(500).json({ error: "Database error" });
-      }
-      if (results.affectedRows === 0) {
-        res.status(404).json({
-          message: "product not found",
-        });
-      }
-      res.json({ message: "product updated!", status: "success" });
-    });
+    const [updateProductResult] = await db.query(sql, [
+      name,
+      price,
+      category_id,
+      id,
+    ]);
+
+    if (updateProductResult.affectedRows === 0) {
+      res.status(404).json({
+        message: "product not found",
+      });
+    }
+    res.json({ message: "product updated!", status: "success" });
   } catch (error) {
     return res.status(500).json({ error: error?.message });
   }
@@ -122,10 +171,8 @@ export const deleteProduct = async (req, res) => {
     return res.status(400).json({ error: "id must br number" });
   }
   const sql = "DELETE FROM productlist WHERE id = ?";
-  db.query(sql, [id], (err, results) => {
-    if (err) {
-      return res.status(500).json(err);
-    }
+  try {
+    const [results] = await db.query(sql, [id]);
     if (results.affectedRows === 0) {
       return res.status(404).json({ error: " product not founnd" });
     }
@@ -133,5 +180,7 @@ export const deleteProduct = async (req, res) => {
       message: "product deleted!",
       status: "success",
     });
-  });
+  } catch (error) {
+    return res.status(500).json({ error: error?.message });
+  }
 };

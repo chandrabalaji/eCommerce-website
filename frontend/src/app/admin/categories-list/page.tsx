@@ -39,7 +39,7 @@ const page = () => {
     }
   }; */
 
-  // Mutation for deleting a student
+  // Mutation
   const { mutate: handleDeleteCategory } = useMutation({
     mutationFn: (id: number) => deleteCategory(id),
     onSuccess: (data: any) => {
@@ -47,37 +47,7 @@ const page = () => {
       queryClient.invalidateQueries({ queryKey: ["categoriesDetails"] });
     },
   });
-  const categoriesList = [
-    {
-      id: 1,
-      name: "All Products",
-      products_count: 5,
-      cat_img:
-        "https://images.pexels.com/photos/25365159/pexels-photo-25365159/free-photo-of-blue-mug-with-plants.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load",
-    },
-    {
-      id: 2,
-      name: " Accessories",
-      products_count: 12,
-      cat_img:
-        "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-    {
-      id: 3,
-      name: " Accessories",
-      products_count: 12,
-      cat_img:
-        "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-    {
-      id: 4,
-      name: " Accessories",
-      products_count: 12,
-      cat_img:
-        "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-  ];
-
+ 
   return (
     <div className="flex flex-col gap-3 px-10 py-4 w-full ">
       <div className="flex items-center justify-between w-full ">

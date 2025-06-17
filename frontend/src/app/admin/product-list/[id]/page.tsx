@@ -1,9 +1,10 @@
 "use client";
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
 import Link from "next/link";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   getCategories,
+  getProductById,
   postCategory,
   postProduct,
   updateCategory,
@@ -12,8 +13,17 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Select from "react-select";
 import { useQuery } from "@tanstack/react-query";
+import { SERVER_URL } from "@/constant";
 
 const page = ({ params }: { params: { id: string } }) => {
+  const productId = useSearchParams()?.get("edit") ?? null;
+
+  const [open, setOpen] = React.useState(false);
+  const [productName, setProductName] = useState("Product 1");
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [price, setPrice] = useState(1);
+  const [images, setImages] = useState<any>([]);
+
   const { data } = useQuery({
     queryKey: ["categoriesDetails"],
     notifyOnChangeProps: ["data"],
@@ -21,21 +31,17 @@ const page = ({ params }: { params: { id: string } }) => {
     queryFn: () => getCategories(),
   });
 
-  const [images, setImages] = useState<any>([]);
-  const editCategoryId = useSearchParams()?.get("edit") ?? null;
-  const editCategoryName = params?.id;
-
-  const [open, setOpen] = React.useState(false);
-  const [productName, setProductName] = useState(
-    editCategoryId ? editCategoryName : "Product 1"
-  );
-  const [selectedCategory, setSelectedCategory] = useState<any>(null);
-  const [price, setPrice] = useState(1);
+  const { data: productDetails } = useQuery({
+    queryKey: ["productDetail"],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getProductById(productId),
+  });
 
   const handlePost = async () => {
-    if (editCategoryId) {
+    if (productId) {
       const { status, data }: any = await updateCategory({
-        id: editCategoryId,
+        id: productId,
         name: productName,
       });
 
@@ -48,7 +54,7 @@ const page = ({ params }: { params: { id: string } }) => {
       formData.append("price", String(price));
       formData.append("category_id", selectedCategory?.id);
       for (let i = 0; i < images.length; i++) {
-        formData.append("images", images[i]?.file); // 'images' is the key for multiple files
+        formData.append("productImages", images[i]?.file); // 'images' is the key for multiple files
       }
 
       const { data, status }: any = await postProduct(formData);
@@ -74,6 +80,19 @@ const page = ({ params }: { params: { id: string } }) => {
 
     setImages((prev: any) => [...prev, ...imagePreviews]);
   };
+
+  useEffect(() => {
+    const productDetail = productDetails?.data[0];
+    if (productDetail) {
+      setProductName(productDetail?.name);
+      setSelectedCategory({
+        id: productDetail?.category_id,
+        name: productDetail?.category_name,
+      });
+      setPrice(productDetail?.price);
+      setImages(productDetail?.image_urls || []);
+    }
+  }, [productDetails]);
 
   return (
     <div className=" ">
@@ -115,16 +134,16 @@ const page = ({ params }: { params: { id: string } }) => {
             {images.map((img: any, index: any) => (
               <div key={index} className="border rounded shadow p-2">
                 <img
-                  src={img.url}
+                  src={img?.file?.name ? img.ur : `${SERVER_URL}/${img.url}`}
                   alt={`preview-${index}`}
                   className="w-full h-40 object-cover rounded"
                 />
-                <p className="text-xs mt-1 break-all">{img.file.name}</p>
+                <p className="text-xs mt-1 break-all">{img?.file?.name}</p>
               </div>
             ))}
           </div>
           <div className="flex flex-col items-center gap-1 mt-10">
-            <p> Adding Products Images</p>
+            <p> Add Products Images</p>
             <button
               className="bg-blue-400 px-6 py-2 rounded-3xl text-white mt-4"
               onClick={handleButtonClick}
@@ -169,6 +188,7 @@ const page = ({ params }: { params: { id: string } }) => {
                 isClearable={true}
                 isSearchable={true}
                 name="color"
+                value={selectedCategory}
                 getOptionValue={(option: any) => option.id}
                 getOptionLabel={(option: any) => option.name}
                 options={data?.data || []}

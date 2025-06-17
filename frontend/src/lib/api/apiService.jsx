@@ -5,7 +5,6 @@ export const getCategories = async () => {
   try {
     const { data } = await Axios.get(API_ROUTES.CATEGORIES);
     return data;
-    return data;
   } catch (error) {
     console.log(error);
   }
@@ -42,6 +41,27 @@ export const deleteCategory = async (id) => {
 };
 
 /*  */
+
+export const getProducts = async () => {
+  try {
+    const { data } = await Axios.get(API_ROUTES.PRODUCTS);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getProductById = async (id) => {
+  try {
+    const { data } = await Axios.get(`${API_ROUTES.PRODUCTS}/${id}`);
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const postProduct = async (params) => {
   try {
     const res = await Axios.post(API_ROUTES.PRODUCTS, params, {
@@ -49,6 +69,15 @@ export const postProduct = async (params) => {
         "Content-Type": "multipart/form-data",
       },
     });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteProduct = async (id) => {
+  try {
+    const res = await Axios.delete(`${API_ROUTES.PRODUCTS}/${id}`);
     return res;
   } catch (error) {
     console.log(error);
