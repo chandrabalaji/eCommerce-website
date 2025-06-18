@@ -119,7 +119,7 @@ const page = ({ params }: { params: { id: string } }) => {
   };
 
   return (
-    <div className=" ">
+    <div className=" font-josefin">
       <div
         className="bg-pink-100 h-48 px-10 py-4 w-full flex items-center justify-between"
         style={{
@@ -128,7 +128,7 @@ const page = ({ params }: { params: { id: string } }) => {
         }}
       >
         <div>
-          <p>Product</p>
+          <p className="text-2xl font-medium">Product</p>
           <input
             type="text"
             value={productName}

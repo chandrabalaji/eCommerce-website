@@ -1,7 +1,21 @@
 import { db } from "../config/db.js";
 
 export const getCategories = async (req, res) => {
-  const sql = "SELECT * FROM  categories";
+  const sql = `
+  WITH Rankedimages  AS (
+    SELECT 
+      c.name, 
+      c.id,
+      pi.image_url,
+      ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY pi.id DESC) AS rn
+    FROM categories c
+    LEFT JOIN products p ON c.id = p.category_id
+    LEFT JOIN product_images pi ON p.id = pi.product_id
+  )
+  SELECT id, name,image_url
+  FROM Rankedimages
+  WHERE rn = 1 OR rn IS NULL
+  `;
 
   try {
     const [results] = await db.query(sql);

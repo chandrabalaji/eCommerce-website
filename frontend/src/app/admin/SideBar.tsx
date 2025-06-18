@@ -16,7 +16,7 @@ const SideBar = () => {
 
   return (
     <>
-      <div className="flex items-center justify-between gap-2 ">
+      <div className="flex items-center justify-between gap-2 font-josefin">
         <p className="text-2xl tracking-wide">LAMA</p>
         <MenuIcon />
       </div>
@@ -25,7 +25,7 @@ const SideBar = () => {
           <Link
             className={` ${
               pathName.includes(menu?.href) ? "bg-pink-400" : ""
-            }  text-center p-2 px-3 w-full rounded-md`}
+            }  text-lg font-medium text-center p-2 px-3 w-full rounded-md font-josefin hover:border hover:border-pink-400`}
             href={menu?.href}
             key={menu?.id}
           >

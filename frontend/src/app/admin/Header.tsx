@@ -7,7 +7,7 @@ import Link from "next/link";
 
 const Header = () => {
   return (
-    <header className="bg-gray-900 text-white  h-16 flex justify-between items-center px-4">
+    <header className="bg-gray-900 text-white  h-16 flex justify-between items-center px-4 font-josefin">
       <div className="w-1/4">
         <SearchBar />
       </div>

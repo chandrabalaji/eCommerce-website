@@ -53,8 +53,9 @@ const page = ({ params }: { params: { catAddEdit: string } }) => {
   useEffect(() => {
     setProductDetails(productDetailsByCategory);
   }, [productDetailsByCategory]);
+
   return (
-    <div className=" ">
+    <div className=" font-josefin">
       <div
         className="bg-pink-100 h-48 px-10 py-4 w-full flex items-center justify-between"
         style={{
@@ -87,9 +88,9 @@ const page = ({ params }: { params: { catAddEdit: string } }) => {
         </div>
       </div>
       <section className="px-10 py-4 flex items-center justify-between">
-        <div className="shadow-2xl bg-white h-96 border w-7/12 relative -top-10 rounded-md p-4">
-          <p className="text-xl font-medium  border-b-2 py-2">
-            Products in Category {productDetails?.meta?.totalCount || 0}
+        <div className="shadow-2xl bg-white h-[calc(100vh-300px)] overflow-y-auto scroll-bar-hide  border w-7/12 relative -top-10 rounded-md px-4">
+          <p className="text-xl font-medium  border-b-2 py-3 sticky top-0 bg-white z-30">
+            Products in Category ({productDetails?.meta?.totalCount || 0})
           </p>
           <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
             {productDetails?.data?.length > 0 ? (
@@ -102,7 +103,7 @@ const page = ({ params }: { params: { catAddEdit: string } }) => {
                   <img
                     src={`${SERVER_URL}/${product?.image_urls[0].url}`}
                     alt={`preview-${product.id}`}
-                    className="w-full h-40 object-cover rounded"
+                    className="w-full h-48 object-cover rounded object-top"
                   />
                   <p className="text-lg font-medium mt-1 break-all">
                     {product?.name}

@@ -35,20 +35,22 @@ const page = () => {
     <div className="flex flex-col gap-3 px-10 py-4 w-full ">
       <div className="flex items-center justify-between w-full ">
         <div>
-          <p className="text-3xl">Productes</p>
-          <p>Groups Related Productes into Categories add them to your site.</p>
+          <p className="text-3xl font-josefin">Productes</p>
+          <p className="font-josefin">
+            Groups Related Productes into Categories add them to your site.
+          </p>
         </div>
         <Link
           href="/admin/product-list/add"
-          className="bg-pink-400 px-6 py-2 rounded-3xl text-white"
+          className="bg-pink-400 px-6 py-2 rounded-3xl text-white font-josefin"
         >
           + Add product
         </Link>
       </div>
-      <section className="flex items-center flex-wrap gap-10 ">
+      <section className="flex items-center flex-wrap gap-10 h-[calc(100vh-180px)] overflow-y-auto scroll-bar-hide ">
         {productDetails?.map((product: any) => (
           <Link
-            className="w-[300px] h-72 relative rounded-md overflow-hidden "
+            className="w-[300px] h-96 relative rounded-lg overflow-hidden shadow-lg"
             key={product.id}
             href={`product-list/${product.name}?edit=${product.id}`}
           >
@@ -57,12 +59,14 @@ const page = () => {
               layout="fill"
               objectFit="cover"
               alt=""
+              className="hover:scale-110 transition-all"
             ></Image>
-            <div className="bg-gradient-to-b from-gray-300 via-gray-400 to-gray-400 w-full absolute bottom-0 left-0 p-2">
-              <div className="text-2xl text-white  flex justify-between items-center ">
-                <span>{product.name}</span> <span>$ {product.price}</span>
-              </div>
+            <div className="bg-gradient-to-b bg-white w-full absolute bottom-0 left-0 p-2 font-josefin">
               <p>{product?.category_name}</p>
+              <p className="text-2xl font-medium  text-pink-400">
+                {product.name}
+              </p>
+              <p>$ {product.price}</p>
             </div>
             <button
               className="bg-red-500 p-2 rounded-full absolute right-2 top-2 opacity-0 hover:opacity-100"
