@@ -62,6 +62,17 @@ export const getProductById = async (id) => {
   }
 };
 
+export const getProductByCategoryId = async (id) => {
+  try {
+    const { data } = await Axios.get(`${API_ROUTES.PRODUCTS}/category/${id}`);
+    console.log(data);
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const postProduct = async (params) => {
   try {
     const res = await Axios.post(API_ROUTES.PRODUCTS, params, {

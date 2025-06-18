@@ -39,7 +39,7 @@ export const getProducts = async (req, res) => {
     res.status(500).json({ error: "Database error", details: err?.message });
   }
 };
-
+// product by id
 export const getProduct = async (req, res) => {
   const { id } = req.params;
   const sql = `SELECT
@@ -63,6 +63,49 @@ export const getProduct = async (req, res) => {
     categories CAT ON p.category_id = CAT.id
   WHERE 
       p.id = ?
+  GROUP BY 
+    p.id 
+    `;
+
+  try {
+    const [results] = await db.execute(sql, [id]);
+
+    res.status(200).json({
+      data: results,
+      status: "success",
+      message: "products fetched successfully",
+      timestamp: Date.now(),
+      meta: {
+        totalCount: results?.length,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Database error", details: err?.message });
+  }
+};
+
+export const getProductsByCategoryId = async (req, res) => {
+  const { categoryId: id } = req.params;
+  const sql = `SELECT
+    p.name,
+    p.id,
+    p.price,
+     JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'id',IMG.id,
+        'url', IMG.image_url,
+        'name', IMG.image_name
+      )
+    ) AS image_urls,
+    CAT.name AS category_name
+  FROM 
+    products p
+  JOIN
+    product_images IMG ON p.id = IMG.product_id
+  JOIN
+    categories CAT ON p.category_id = CAT.id
+  WHERE 
+      p.category_id = ?
   GROUP BY 
     p.id 
     `;

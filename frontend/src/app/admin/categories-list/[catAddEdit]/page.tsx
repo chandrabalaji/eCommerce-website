@@ -1,19 +1,33 @@
 "use client";
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
 import Link from "next/link";
-import React, { useState } from "react";
-import { postCategory, updateCategory } from "../../../../lib/api/apiService";
+import React, { useEffect, useState } from "react";
+import {
+  getProductByCategoryId,
+  postCategory,
+  updateCategory,
+} from "../../../../lib/api/apiService";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { SERVER_URL } from "@/constant";
 
 const page = ({ params }: { params: { catAddEdit: string } }) => {
   const editCategoryId = useSearchParams()?.get("edit") ?? null;
   const editCategoryName = params?.catAddEdit;
 
   const [open, setOpen] = React.useState(false);
+  const [productDetails, setProductDetails] = useState<any>(null);
   const [categoryName, setCategoryName] = useState(
     editCategoryId ? editCategoryName : "Category 1"
   );
+
+  const { data: productDetailsByCategory } = useQuery({
+    queryKey: ["productDetail"],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getProductByCategoryId(editCategoryId),
+  });
 
   const handlePost = async () => {
     if (editCategoryId) {
@@ -36,6 +50,9 @@ const page = ({ params }: { params: { catAddEdit: string } }) => {
     }
   };
 
+  useEffect(() => {
+    setProductDetails(productDetailsByCategory);
+  }, [productDetailsByCategory]);
   return (
     <div className=" ">
       <div
@@ -72,20 +89,44 @@ const page = ({ params }: { params: { catAddEdit: string } }) => {
       <section className="px-10 py-4 flex items-center justify-between">
         <div className="shadow-2xl bg-white h-96 border w-7/12 relative -top-10 rounded-md p-4">
           <p className="text-xl font-medium  border-b-2 py-2">
-            Products in Category 0
+            Products in Category {productDetails?.meta?.totalCount || 0}
           </p>
-          <div className="flex flex-col items-center gap-1 mt-10">
-            <p>Start Adding Product to your category</p>
-            <p className="text-gray-600">
-              Create new category to display on your site
-            </p>
-            <button
-              className="bg-blue-400 px-6 py-2 rounded-3xl text-white mt-4"
-              onClick={() => setOpen(true)}
-            >
-              {" "}
-              + Add Product
-            </button>
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 ">
+            {productDetails?.data?.length > 0 ? (
+              productDetails?.data?.map((product: any) => (
+                <Link
+                  key={product.id}
+                  className="border rounded shadow p-2 cursor-pointer hover:scale-110 transition-all"
+                  href={`/admin/product-list/${product.name}?edit=${product.id}`}
+                >
+                  <img
+                    src={`${SERVER_URL}/${product?.image_urls[0].url}`}
+                    alt={`preview-${product.id}`}
+                    className="w-full h-40 object-cover rounded"
+                  />
+                  <p className="text-lg font-medium mt-1 break-all">
+                    {product?.name}
+                  </p>
+                  <p className="text-sm font-medium mt-1 break-all">
+                    $ {product?.price}
+                  </p>
+                </Link>
+              ))
+            ) : (
+              <div className="flex flex-col items-center gap-1 mt-10">
+                <p>Start Adding Product to your category</p>
+                <p className="text-gray-600">
+                  Create new category to display on your site
+                </p>
+                <button
+                  className="bg-blue-400 px-6 py-2 rounded-3xl text-white mt-4"
+                  onClick={() => setOpen(true)}
+                >
+                  {" "}
+                  + Add Product
+                </button>
+              </div>
+            )}
           </div>
         </div>
         <div className="shadow-2xl bg-white h-96 border w-4/12 relative -top-10 rounded-md p-4">
