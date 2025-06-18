@@ -75,6 +75,19 @@ export const postProduct = async (params) => {
   }
 };
 
+export const updateProduct = async (params, id) => {
+  try {
+    const res = await Axios.put(`${API_ROUTES.PRODUCTS}/${id}`, params, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const deleteProduct = async (id) => {
   try {
     const res = await Axios.delete(`${API_ROUTES.PRODUCTS}/${id}`);

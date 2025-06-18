@@ -1,5 +1,9 @@
+import path from "path";
+import fs from "fs";
 import { db } from "../config/db.js";
 import { validateRequiredFields } from "../utils/validateFields.js";
+import { __dirname } from "../constant.js";
+
 const requiredFields = ["name", "price", "category_id"];
 
 export const getProducts = async (req, res) => {
@@ -45,8 +49,9 @@ export const getProduct = async (req, res) => {
     p.category_id,
      JSON_ARRAYAGG(
       JSON_OBJECT(
+        'id',IMG.id,
         'url', IMG.image_url,
-        'name', IMG.image_url
+        'name', IMG.image_name
       )
     ) AS image_urls,
     CAT.name AS category_name
@@ -104,10 +109,11 @@ export const addProduct = async (req, res) => {
 
     const insertImages = productImages.map((file, index) => {
       const filePath = file.path;
-      const isPrimary = index == 0 ? true : false;
+      const fileName = file.name;
+
       const sql =
-        "INSERT INTO product_images(product_id,image_url,is_primary) VALUES(? , ?, ?) ";
-      return db.query(sql, [productId, filePath, isPrimary]);
+        "INSERT INTO product_images(product_id,image_url,image_name) VALUES(? , ?, ?) ";
+      return db.query(sql, [productId, filePath, fileName]);
     });
     await Promise.all(insertImages);
     res.status(201).json({
@@ -124,6 +130,8 @@ export const updateProduct = async (req, res) => {
   // Update logic
   const { id } = req.params;
   const { name, price, category_id } = req.body;
+  const product_images = req.files;
+  const deleteImageIds = JSON.parse(req.body.delete_images_ids || "[]");
 
   //  Validate ID is a valid number
   if (isNaN(id)) {
@@ -143,7 +151,7 @@ export const updateProduct = async (req, res) => {
   }
 
   const sql =
-    "UPDATE productlist SET name = ? , price = ? , category_id = ?  WHERE id = ?";
+    "UPDATE products SET name = ? , price = ? , category_id = ?  WHERE id = ?";
 
   try {
     const [updateProductResult] = await db.query(sql, [
@@ -158,7 +166,42 @@ export const updateProduct = async (req, res) => {
         message: "product not found",
       });
     }
-    res.json({ message: "product updated!", status: "success" });
+
+    // images delete functions
+    if (deleteImageIds.length) {
+      const [images] = await db.query(
+        "SELECT id, image_url FROM product_images WHERE id IN (?)",
+        [deleteImageIds]
+      );
+      images.forEach((imageObj) => {
+        const filePath = path.join(__dirname, imageObj.image_url);
+        fs.unlink(filePath, (err) => {
+          if (err) console.error(err, "delete  product images");
+        });
+      });
+
+      await db.query("DELETE FROM product_images WHERE id IN (?)", [
+        deleteImageIds,
+      ]);
+    }
+
+    if (product_images) {
+      const updateProductImages = product_images.map((file) => {
+        const filePath = file.path;
+        const fileName = file.originalname;
+
+        const sql =
+          "INSERT INTO product_images(product_id,image_url,image_name) VALUES(? , ?, ?)";
+
+        return db.query(sql, [id, filePath, fileName]);
+      });
+      await Promise.all(updateProductImages);
+    }
+    res.json({
+      message: "product updated!",
+      status: "success",
+      updatedId: id,
+    });
   } catch (error) {
     return res.status(500).json({ error: error?.message });
   }
