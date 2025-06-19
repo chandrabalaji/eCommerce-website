@@ -65,7 +65,7 @@ const page = () => {
           </Link>
         </div>
       </div>
-      <section className="flex items-center flex-wrap gap-4 sm:gap-8">
+      <section className="flex items-center flex-wrap gap-4 sm:gap-8 h-[calc(100vh-180px)] overflow-y-auto scroll-bar-hide">
         {categoriesDetails?.map((category: any) => (
           <Link
             className="w-[160px] h-72 sm:w-[300px] sm:h-96 relative rounded-md overflow-hidden shadow-lg"
