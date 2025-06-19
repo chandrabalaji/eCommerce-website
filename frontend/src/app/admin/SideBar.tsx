@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 
-const SideBar = () => {
+const SideBar = ({ isSidebarOpen, toggleSidebar }: any) => {
   const pathName = usePathname();
 
   const sideBarLinks = [
@@ -15,10 +15,17 @@ const SideBar = () => {
   ];
 
   return (
-    <>
+    <div
+      className={`transition-transform duration-300 ease-in-out s bg-gray-900 text-white h-screen p-2 
+      w-4/5 absolute z-50 lg:relative lg:w-1/6
+      ${isSidebarOpen ? "translate-x-0" : "-translate-x-80"} 
+      lg:translate-x-0 lg:block`}
+    >
       <div className="flex items-center justify-between gap-2 font-josefin">
+        <button onClick={toggleSidebar}>
+          <MenuIcon />
+        </button>
         <p className="text-2xl tracking-wide">LAMA</p>
-        <MenuIcon />
       </div>
       <aside className="flex flex-col gap-4 items-start  py-3 rounded-md w-full mt-3">
         {sideBarLinks.map((menu) => (
@@ -33,7 +40,7 @@ const SideBar = () => {
           </Link>
         ))}
       </aside>
-    </>
+    </div>
   );
 };
 

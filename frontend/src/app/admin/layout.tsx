@@ -1,27 +1,21 @@
-// app/admin/layout.tsx
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+"use client";
+import { useState } from "react";
 import Header from "./Header";
 import SideBar from "./SideBar";
-const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Admin Panel - Lama Dev E-Commerce Application",
-  description: "Admin dashboard for managing the e-commerce platform.",
-};
 
 export default function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+
   return (
     <div className="flex">
-      <div className="bg-gray-900 text-white w-1/6 h-screen p-2">
-        <SideBar />
-      </div>
-      <div className="w-5/6">
-        <Header />
+      <SideBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      <div className=" w-full lg:w-5/6">
+        <Header  toggleSidebar={toggleSidebar} />
         <div>{children}</div>
       </div>
     </div>
