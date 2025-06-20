@@ -16,11 +16,14 @@ import Select from "react-select";
 import { useQuery } from "@tanstack/react-query";
 import { SERVER_URL } from "@/constant";
 import CloseIcon from "@mui/icons-material/Close";
+import Switch from "@mui/material/Switch";
 
 const page = ({ params }: { params: { id: string } }) => {
   const productId = useSearchParams()?.get("edit") ?? null;
+  const label = { inputProps: { "aria-label": "Switch demo" } };
 
   const [open, setOpen] = React.useState(false);
+  const [todatDealStatus, setTodayDealStatus] = useState(false);
   const [productName, setProductName] = useState("Product 1");
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [price, setPrice] = useState(1);
@@ -46,6 +49,7 @@ const page = ({ params }: { params: { id: string } }) => {
     formData.append("name", productName);
     formData.append("price", String(price));
     formData.append("category_id", selectedCategory?.id);
+    formData.append("is_today_deal", JSON.stringify(todatDealStatus));
     if (deleteImageIds.length) {
       formData.append("delete_images_ids", JSON.stringify(deleteImageIds));
     }
@@ -191,7 +195,7 @@ const page = ({ params }: { params: { id: string } }) => {
             </button>
           </div>
         </div>
-        <div className="shadow-2xl bg-white h-96 border w-4/12 relative -top-10 rounded-md p-4">
+        <div className="shadow-2xl bg-white border w-4/12 relative -top-10 rounded-md p-4">
           <p className="text-xl font-medium  border-b-2 py-2">Product info</p>
           <div className="w-full mt-4 flex flex-col gap-5">
             <div className="flex flex-col gap-3">
@@ -225,6 +229,14 @@ const page = ({ params }: { params: { id: string } }) => {
                 getOptionLabel={(option: any) => option.name}
                 options={data?.data || []}
                 onChange={(e) => setSelectedCategory(e)}
+              />
+            </div>
+            <div>
+              <label>Mark as Today Deal</label>
+              <Switch
+                {...label}
+                checked={todatDealStatus}
+                onChange={(e: any) => setTodayDealStatus(e.target.checked)}
               />
             </div>
           </div>

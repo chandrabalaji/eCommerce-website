@@ -9,7 +9,9 @@ const requiredFields = ["name", "price", "category_id"];
 export const getProducts = async (req, res) => {
   const { offset, limit } = req.query;
 
-  const sql = `SELECT
+  const params = [];
+
+  let sql = `SELECT
     p.name,
     p.id,
     p.price,
@@ -30,12 +32,16 @@ export const getProducts = async (req, res) => {
     categories CAT ON p.category_id = CAT.id
   GROUP BY 
     p.id
-  LIMIT ? , ?  `;
+    `;
 
   const countQuery = `SELECT COUNT(*) AS totalCount FROM products`;
+  if (limit != 0) {
+    sql += "LIMIT ? OFFSET ? ";
+    params.push(limit, offset);
+  }
 
   try {
-    const [results] = await db.execute(sql, [offset, limit]);
+    const [results] = await db.execute(sql, params);
     const [[{ totalCount }]] = await db.execute(countQuery);
 
     res.status(200).json({
@@ -60,6 +66,7 @@ export const getProduct = async (req, res) => {
     p.name,
     p.id,
     p.price,
+    p.is_today_deal,
     p.category_id,
      JSON_ARRAYAGG(
       JSON_OBJECT(
@@ -145,6 +152,7 @@ export const addProduct = async (req, res) => {
   // Add logic
   //name price category_id
   const { name, price, category_id } = req.body;
+  const todayDealValue = JSON.parse(req.body.is_today_deal);
   const productImages = req.files;
 
   const validation = validateRequiredFields(req.body, requiredFields);
@@ -157,10 +165,16 @@ export const addProduct = async (req, res) => {
     });
   }
 
-  const sql = "INSERT INTO products(name,price,category_id) VALUES (?,?,?)";
+  const sql =
+    "INSERT INTO products(name,price,category_id,todayDealValue) VALUES (?,?,?,?)";
 
   try {
-    const [productResult] = await db.query(sql, [name, price, category_id]);
+    const [productResult] = await db.query(sql, [
+      name,
+      price,
+      category_id,
+      todayDealValue,
+    ]);
 
     const productId = productResult.insertId;
 
@@ -187,6 +201,7 @@ export const updateProduct = async (req, res) => {
   // Update logic
   const { id } = req.params;
   const { name, price, category_id } = req.body;
+  const todayDealValue = JSON.parse(req.body.is_today_deal);
   const product_images = req.files;
   const deleteImageIds = JSON.parse(req.body.delete_images_ids || "[]");
 
@@ -208,13 +223,14 @@ export const updateProduct = async (req, res) => {
   }
 
   const sql =
-    "UPDATE products SET name = ? , price = ? , category_id = ?  WHERE id = ?";
+    "UPDATE products SET name = ? , price = ? , category_id = ? , is_today_deal = ? WHERE id = ?";
 
   try {
     const [updateProductResult] = await db.query(sql, [
       name,
       price,
       category_id,
+      todayDealValue,
       id,
     ]);
 

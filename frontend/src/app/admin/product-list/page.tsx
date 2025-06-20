@@ -16,7 +16,7 @@ const page = () => {
     queryKey: ["productDetails"],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
-    queryFn: () => getProducts(),
+    queryFn: () => getProducts({ offset: 0, limit: 0 }),
   });
   useEffect(() => {
     setProductDetails(data?.data);
@@ -57,7 +57,7 @@ const page = () => {
             href={`product-list/${product.name}?edit=${product.id}`}
           >
             <Image
-              src={`${SERVER_URL}/${product.image_urls[0]}`}
+              src={`${SERVER_URL}/${product.image_urls[0]?.url}`}
               layout="fill"
               objectFit="cover"
               alt=""
