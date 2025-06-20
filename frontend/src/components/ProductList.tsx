@@ -1,19 +1,71 @@
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-import { ProductDetails } from "@/utils/utils";
+
+import { useQuery } from "@tanstack/react-query";
+import {
+  getCategories,
+  getProductByCategoryId,
+  getProducts,
+} from "@/lib/api/apiService";
 
 const ProductList = () => {
-  const collections = [
-    "All",
-    "T-shirt",
-    "Shirt",
-    "Phant",
-    "Hoodies",
-    "Foot Wear",
-    "Accessories",
-  ];
+  const allCategoriesId = "ab@12";
+  const [categoriesDetails, setCategoriesDetails] = useState<any>(null);
+  const [activeCategory, setActiveCategory] = useState<any>(allCategoriesId);
+  const [productDetails, setProductDetails] = useState<any>([]);
+  const [offset, setOffset] = useState(0);
+
+  // Queries
+  const { data } = useQuery({
+    queryKey: ["categoriesDetails"],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getCategories(),
+  });
+
+  const { data: productDetailsArray } = useQuery({
+    queryKey: ["productDetails", offset],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getProducts({ offset, limit: 20 }),
+  });
+
+  const { data: productDetailsByCategory } = useQuery({
+    queryKey: ["productDetailsByCategory", activeCategory],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => {
+      if (activeCategory === allCategoriesId) {
+        return getProducts({ offset, limit: 20 });
+      } else {
+        return getProductByCategoryId(activeCategory);
+      }
+    },
+  });
+
+  useEffect(() => {
+    setProductDetails(productDetailsByCategory?.data);
+  }, [productDetailsByCategory]);
+
+  useEffect(() => {
+    const categories = [{ id: allCategoriesId, name: "All" }].concat(
+      data?.data
+    );
+    if (data) {
+      setCategoriesDetails(categories);
+      if (productDetailsArray?.data) {
+        if (offset === 0) {
+          setProductDetails(productDetailsArray?.data);
+        } else {
+          setProductDetails((prev: any) => [
+            ...(prev || []),
+            ...(productDetailsArray?.data || []),
+          ]);
+        }
+      }
+    }
+  }, [data, productDetailsArray]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -21,119 +73,34 @@ const ProductList = () => {
         Top Selling Products
       </h3>
       <div className="flex items-center gap-3">
-        {collections.map((collection, index) => (
+        {categoriesDetails?.map((category: any) => (
           <button
-            key={index}
+            key={category.id}
             className={` ${
-              index == 0 ? "bg-orange-400 text-white" : "bg-red-50"
+              category.id == activeCategory
+                ? "bg-orange-400 text-white"
+                : "bg-red-50"
             } p-2 px-3 rounded-sm text-base font-normal `}
+            onClick={() => setActiveCategory(category?.id)}
           >
-            {collection}
+            {category.name}
           </button>
         ))}
       </div>
-      <div className=" mt-12 flex gap-x-4 xl:gap-x-8 gap-y-16  flex-wrap">
-        {ProductDetails.map((product) => (
+      <div className=" mt-12 flex gap-x-4 xl:gap-x-8 gap-y-8  flex-wrap">
+        {productDetails?.map((product: any) => (
           <ProductCard product={product} />
         ))}
-
-        {/*  <Link
-          href="/test"
-          className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]"
-        >
-          <div className="relative w-full h-80">
-            <Image
-              src="https://images.pexels.com/photos/25365159/pexels-photo-25365159/free-photo-of-blue-mug-with-plants.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
-              sizes="25vw"
-              width={310}
-              height={50}
-              alt=""
-              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500 max-h-80 w-full"
-            />{" "}
-            <Image
-              src="https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300"
-              sizes="25vw"
-              width={310}
-              height={50}
-              alt=""
-              className="absolute object-cover rounded-md max-h-80 w-full"
-            />{" "}
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Product Name</span>
-            <span className="font-medium">$49</span>
-          </div>
-          <div className="text-sm text-gray-500">My description</div>
-          <button className="rounded-2xl ring-1 w-max ring-pink-600 text-pink-600 py-2 px-4 hover:bg-pink-600 hover:text-white">
-            Add to Cart
-          </button>
-        </Link>
-        <Link
-          href="/test"
-          className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]"
-        >
-          <div className="relative w-full h-80">
-            <Image
-              src="https://images.pexels.com/photos/25365159/pexels-photo-25365159/free-photo-of-blue-mug-with-plants.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
-              sizes="25vw"
-              width={500}
-              height={50}
-              alt=""
-              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500 max-h-80 w-full"
-            />
-            <Image
-              src="https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300"
-              sizes="25vw"
-              width={500}
-              height={50}
-              alt=""
-              className="absolute object-cover rounded-md max-h-80  w-full"
-            />
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Product Name</span>
-            <span className="font-medium">$49</span>
-          </div>
-          <div className="text-sm text-gray-500">My description</div>
-          <button className="rounded-2xl ring-1 w-max ring-pink-600 text-pink-600 py-2 px-4 hover:bg-pink-600 hover:text-white">
-            Add to Cart
-          </button>
-        </Link>
-        <Link
-          href="/test"
-          className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]"
-        >
-          <div className="relative w-full h-80">
-            <Image
-              src="https://images.pexels.com/photos/25365159/pexels-photo-25365159/free-photo-of-blue-mug-with-plants.jpeg?auto=compress&cs=tinysrgb&w=300&lazy=load"
-              sizes="25vw"
-              width={310}
-              height={50}
-              alt=""
-              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500 max-h-80 w-full"
-            />{" "}
-            <Image
-              src="https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300"
-              sizes="25vw"
-              width={310}
-              height={50}
-              alt=""
-              className="absolute object-cover rounded-md max-h-80 w-full"
-            />{" "}
-          </div>
-          <div className="flex justify-between">
-            <span className="font-semibold">Product Name</span>
-            <span className="font-medium">$49</span>
-          </div>
-          <div className="text-sm text-gray-500">My description</div>
-          <button className="rounded-2xl ring-1 w-max ring-pink-600 text-pink-600 py-2 px-4 hover:bg-pink-600 hover:text-white">
-            Add to Cart
-          </button>
-        </Link> */}
       </div>
-      <button className="mt-16 text-lg font-josefin px-3 py-2 border-2 border-orange-400 text-orange-400 hover:text-white hover:bg-orange-400 w-max  self-center">
-        View More
-      </button>
+      {productDetailsArray?.meta?.totalCount > productDetails?.length &&
+        activeCategory === allCategoriesId && (
+          <button
+            className="mt-16 text-lg font-josefin px-3 py-2 border-2 border-orange-400 text-orange-400 hover:text-white hover:bg-orange-400 w-max  self-center"
+            onClick={() => setOffset(offset + 20)}
+          >
+            View More
+          </button>
+        )}
     </div>
   );
 };

@@ -42,9 +42,11 @@ export const deleteCategory = async (id) => {
 
 /*  */
 
-export const getProducts = async () => {
+export const getProducts = async (params) => {
   try {
-    const { data } = await Axios.get(API_ROUTES.PRODUCTS);
+    const { data } = await Axios.get(
+      `${API_ROUTES.PRODUCTS}?limit=${params.limit}&offset=${params.offset}`
+    );
     return data;
   } catch (error) {
     console.log(error);

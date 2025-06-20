@@ -7,12 +7,20 @@ import { __dirname } from "../constant.js";
 const requiredFields = ["name", "price", "category_id"];
 
 export const getProducts = async (req, res) => {
+  const { offset, limit } = req.query;
+
   const sql = `SELECT
     p.name,
     p.id,
     p.price,
     p.category_id,
-     JSON_ARRAYAGG(IMG.image_url) AS image_urls,
+     JSON_ARRAYAGG(
+     JSON_OBJECT(
+        'id',IMG.id,
+        'url', IMG.image_url,
+        'name', IMG.image_name
+      )
+    ) AS image_urls,
     CAT.name AS category_name
   FROM 
     products p
@@ -21,10 +29,14 @@ export const getProducts = async (req, res) => {
   JOIN
     categories CAT ON p.category_id = CAT.id
   GROUP BY 
-    p.id`;
+    p.id
+  LIMIT ? , ?  `;
+
+  const countQuery = `SELECT COUNT(*) AS totalCount FROM products`;
 
   try {
-    const [results] = await db.execute(sql);
+    const [results] = await db.execute(sql, [offset, limit]);
+    const [[{ totalCount }]] = await db.execute(countQuery);
 
     res.status(200).json({
       data: results,
@@ -32,7 +44,9 @@ export const getProducts = async (req, res) => {
       message: "products fetched successfully",
       timestamp: Date.now(),
       meta: {
-        totalCount: results?.length,
+        totalCount: totalCount,
+        offset,
+        limit,
       },
     });
   } catch (err) {
