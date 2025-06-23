@@ -2,6 +2,7 @@ import express from "express";
 import { connectMysqlDb, db } from "./config/db.js";
 import categories from "./routes/categoryRoutes.js";
 import products from "./routes/productRoutes.js";
+import combos from "./routes/comboRoutes.js";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 app.use(categories);
 app.use(products);
+app.use(combos);
 
 app.get("/uploads/:image", (req, res) => {
   const fileName = req.params.image;

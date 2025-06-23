@@ -4,8 +4,12 @@ import React, { useState } from "react";
 import Link from "next/link";
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
 import { SERVER_URL } from "@/constant";
+import { postCombo, updateCombo } from "@/lib/api/apiService";
+import toast from "react-hot-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const page = ({ params }: { params: { id: string } }) => {
+  const queryClient = useQueryClient();
   const comboId = useSearchParams()?.get("edit") ?? null;
 
   const [open, setOpen] = React.useState(false);
@@ -23,6 +27,30 @@ const page = ({ params }: { params: { id: string } }) => {
 
     setImage(imagePreviews);
   };
+
+  const handlePost = async () => {
+    const payload = {
+      combo_name: comboName,
+      combo_price: price,
+      product_ids: selectedItemForCombo.map((product: any) => product.id),
+    };
+    handleDeleteCategory(payload);
+  };
+  
+  const { mutate: handleDeleteCategory } = useMutation({
+    mutationFn: (payload: any) => {
+      if (comboId) {
+        return updateCombo(payload);
+      } else {
+        return postCombo(payload);
+      }
+    },
+    onSuccess: (data: any) => {
+      console.log(data);
+      toast.success(data?.data?.message);
+      queryClient.invalidateQueries({ queryKey: ["comboDetails"] });
+    },
+  });
 
   return (
     <div className=" font-josefin">
@@ -51,7 +79,7 @@ const page = ({ params }: { params: { id: string } }) => {
           </Link>
           <button
             className="bg-white text-black min-w-32 py-2 rounded-3xl"
-            // onClick={handlePost}
+            onClick={handlePost}
           >
             Save
           </button>

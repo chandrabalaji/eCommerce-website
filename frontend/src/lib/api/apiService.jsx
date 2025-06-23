@@ -118,3 +118,23 @@ export const deleteProduct = async (id) => {
     console.log(error);
   }
 };
+
+/* COMBO PRODUCTS */
+
+export const postCombo = async (params) => {
+  try {
+    const res = await Axios.post(API_ROUTES.COMBO, params);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const updateCombo = async (params) => {
+  try {
+    const res = await Axios.put(API_ROUTES.COMBO, params);
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
