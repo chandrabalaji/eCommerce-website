@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
@@ -7,6 +8,9 @@ import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
 import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "@/lib/api/apiService";
+import { SERVER_URL } from "@/constant";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -17,37 +21,48 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const ProductMaptoCategory = ({ open, setOpen }: any) => {
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+const ProductMaptoCategory = ({
+  open,
+  setOpen,
+  setSelectedItemForCombo,
+}: any) => {
+  const [productDetails, setProductDetails] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<any>([]);
+
+  const { data } = useQuery({
+    queryKey: ["productDetails"],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getProducts({ offset: 0, limit: 0 }),
+  });
+  useEffect(() => {
+    setProductDetails(data?.data);
+  }, [data]);
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const productList = [
-    {
-      id: 1,
-      name: "Boat Air Buds",
-      img: "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-    {
-      id: 2,
-      name: "Boat Air Buds",
-      img: "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-    {
-      id: 3,
-      name: "Boat Air Buds",
-      img: "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-    {
-      id: 4,
-      name: "Boat Air Buds",
-      img: "https://images.pexels.com/photos/12405330/pexels-photo-12405330.jpeg?auto=compress&cs=tinysrgb&w=300",
-    },
-  ];
+  const handleSubmit = () => {
+    if (selectedProduct?.length === 0) {
+      setOpen(false);
+    } else {
+      setOpen(false);
+      setSelectedItemForCombo(selectedProduct);
+    }
+  };
+
+  const handleCheckBox = (e: any, item: any) => {
+    const isChecked = e.target.checked;
+    if (isChecked) {
+      setSelectedProduct((prev: any) => [...prev, item]);
+    } else {
+      const filteredItems = selectedProduct.filter(
+        (product: any) => product.id !== item.id
+      );
+      setSelectedProduct(filteredItems);
+    }
+  };
 
   return (
     <div>
@@ -57,14 +72,15 @@ const ProductMaptoCategory = ({ open, setOpen }: any) => {
         keepMounted
         onClose={handleClose}
         aria-describedby="alert-dialog-slide-description "
+        className="max-h-[600px] overflow-y-auto my-auto"
       >
-        <DialogTitle>{"Add product to this category"}</DialogTitle>
+        <DialogTitle>{"Make a Combo"}</DialogTitle>
         <DialogContent>
           <DialogContentText
             id="alert-dialog-slide-description"
             className="flex flex-col gap-3"
           >
-            {productList?.map((product) => (
+            {productDetails?.map((product: any) => (
               <div
                 key={product.id}
                 className="flex items-center justify-between min-w-96 hover:bg-blue-300 px-2 py-2 cursor-pointer rounded-lg"
@@ -72,15 +88,21 @@ const ProductMaptoCategory = ({ open, setOpen }: any) => {
                 <div className="flex items-center gap-4">
                   <div className=" relative w-12 h-12 rounded-full overflow-hidden">
                     <Image
-                      src={product.img}
+                      src={`${SERVER_URL}/${product.image_urls[0]?.url}`}
                       layout="fill"
                       objectFit="cover"
+                      className="object-top"
                       alt=""
                     ></Image>
                   </div>
                   <p>{product?.name}</p>
                 </div>
-                <input type="checkbox" name="" id="" />
+                <input
+                  type="checkbox"
+                  name=""
+                  id=""
+                  onChange={(e) => handleCheckBox(e, product)}
+                />
               </div>
             ))}
           </DialogContentText>
@@ -93,7 +115,7 @@ const ProductMaptoCategory = ({ open, setOpen }: any) => {
             Cancel
           </button>
           <button
-            onClick={handleClose}
+            onClick={handleSubmit}
             className="bg-blue-400 px-6 py-2 rounded-3xl text-white mt-4"
           >
             Add

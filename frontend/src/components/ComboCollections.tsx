@@ -1,24 +1,10 @@
 "use client";
-
-import React, { useEffect, useRef, useState } from "react";
-import ProductCard from "./ProductCard";
+import React, { useRef } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import { useQuery } from "@tanstack/react-query";
-import { getTodayDeals } from "@/lib/api/apiService";
 
-const TodayDeals = () => {
-  const [productDetails, setProductDetails] = useState<any>(null);
-
-  const { data: productDetailsArray } = useQuery({
-    queryKey: ["todayDeals"],
-    notifyOnChangeProps: ["data"],
-    staleTime: Infinity,
-    queryFn: () => getTodayDeals(),
-  });
-
+const ComboCollections = () => {
   const producttemsRef = useRef<any | HTMLDivElement>(null);
-
   const handleNext = () => {
     producttemsRef.current?.scrollBy({ left: 560, behavior: "smooth" });
   };
@@ -26,11 +12,6 @@ const TodayDeals = () => {
   const handlePrev = () => {
     producttemsRef.current?.scrollBy({ left: -560, behavior: "smooth" });
   };
-
-  useEffect(() => {
-    setProductDetails(productDetailsArray?.data);
-  }, [productDetailsArray]);
-
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -55,13 +36,9 @@ const TodayDeals = () => {
       <div
         className="flex items-center overflow-auto gap-4 scroll-bar-hide"
         ref={producttemsRef}
-      >
-        {productDetails?.map((product:any) => (
-          <ProductCard product={product} />
-        ))}
-      </div>
+      ></div>
     </div>
   );
 };
 
-export default TodayDeals;
+export default ComboCollections;

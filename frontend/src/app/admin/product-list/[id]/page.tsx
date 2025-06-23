@@ -102,6 +102,7 @@ const page = ({ params }: { params: { id: string } }) => {
       });
       setPrice(productDetail?.price);
       setImages(productDetail?.image_urls || []);
+      setTodayDealStatus(Boolean(Number(productDetail?.is_today_deal)));
     }
   }, [productDetails]);
 

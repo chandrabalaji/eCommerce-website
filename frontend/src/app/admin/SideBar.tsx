@@ -10,6 +10,7 @@ const SideBar = ({ isSidebarOpen, toggleSidebar }: any) => {
   const sideBarLinks = [
     { id: 1, name: "Category", href: "/admin/categories-list" },
     { id: 2, name: " Products", href: "/admin/product-list" },
+    { id: 2, name: " Combo", href: "/admin/combo-list" },
     { id: 3, name: " Orders", href: "/admin/Orders" },
     { id: 4, name: " Customers", href: "/admin/Customers" },
   ];

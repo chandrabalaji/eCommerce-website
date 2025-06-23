@@ -87,7 +87,11 @@ export const getProduct = async (req, res) => {
   GROUP BY 
     p.id 
     `;
-
+  if (isNaN(id)) {
+   return res.status(400).json({
+      error: "Invalid  product ID. It must be a number.",
+    });
+  }
   try {
     const [results] = await db.execute(sql, [id]);
 
@@ -105,6 +109,40 @@ export const getProduct = async (req, res) => {
   }
 };
 
+export const getTodayDeals = async (req, res) => {
+  let sql = `SELECT
+    p.name,
+    p.id,
+    p.price,
+    p.category_id,
+     JSON_ARRAYAGG(
+     JSON_OBJECT(
+        'id',IMG.id,
+        'url', IMG.image_url,
+        'name', IMG.image_name
+      )
+    ) AS image_urls,
+    CAT.name AS category_name
+  FROM 
+    products p
+  JOIN
+    product_images IMG ON p.id = IMG.product_id
+  JOIN
+    categories CAT ON p.category_id = CAT.id
+  WHERE
+     p.is_today_deal = 1
+  GROUP BY 
+     p.id
+    `;
+
+  const [results] = await db.query(sql);
+  res.json({
+    data: results,
+    status: "success",
+    message: " todayDeals products fetched successfully",
+    timestamp: Date.now(),
+  });
+};
 export const getProductsByCategoryId = async (req, res) => {
   const { categoryId: id } = req.params;
   const sql = `SELECT
