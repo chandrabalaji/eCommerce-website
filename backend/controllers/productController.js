@@ -204,7 +204,7 @@ export const addProduct = async (req, res) => {
   }
 
   const sql =
-    "INSERT INTO products(name,price,category_id,todayDealValue) VALUES (?,?,?,?)";
+    "INSERT INTO products(name,price,category_id,is_today_deal) VALUES (?,?,?,?)";
 
   try {
     const [productResult] = await db.query(sql, [
