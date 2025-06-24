@@ -24,10 +24,13 @@ const Transition = React.forwardRef(function Transition(
 const ProductMaptoCategory = ({
   open,
   setOpen,
+  selectedItemForCombo,
   setSelectedItemForCombo,
 }: any) => {
   const [productDetails, setProductDetails] = useState<any>(null);
-  const [selectedProduct, setSelectedProduct] = useState<any>([]);
+  const [selectedProduct, setSelectedProduct] = useState<any>(
+    selectedItemForCombo || []
+  );
 
   const { data } = useQuery({
     queryKey: ["productDetails"],
@@ -62,6 +65,10 @@ const ProductMaptoCategory = ({
       );
       setSelectedProduct(filteredItems);
     }
+  };
+
+  const handleIsChecked = (id: number) => {
+    return selectedProduct.some((product: any) => product.id === id);
   };
 
   return (
@@ -101,6 +108,7 @@ const ProductMaptoCategory = ({
                   type="checkbox"
                   name=""
                   id=""
+                  checked={handleIsChecked(product?.id)}
                   onChange={(e) => handleCheckBox(e, product)}
                 />
               </div>

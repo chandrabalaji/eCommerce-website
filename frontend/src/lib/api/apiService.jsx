@@ -121,9 +121,31 @@ export const deleteProduct = async (id) => {
 
 /* COMBO PRODUCTS */
 
+export const getCombos = async () => {
+  try {
+    const { data } = await Axios.get(API_ROUTES.COMBO);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getComboById = async (id) => {
+  try {
+    const { data } = await Axios.get(`${API_ROUTES.COMBO}/${id}`);
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const postCombo = async (params) => {
   try {
-    const res = await Axios.post(API_ROUTES.COMBO, params);
+    const res = await Axios.post(API_ROUTES.COMBO, params, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return res;
   } catch (error) {
     console.log(error);
@@ -132,7 +154,20 @@ export const postCombo = async (params) => {
 
 export const updateCombo = async (params) => {
   try {
-    const res = await Axios.put(API_ROUTES.COMBO, params);
+    const res = await Axios.put(API_ROUTES.COMBO, params, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return res;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const deleteCombo = async (id) => {
+  try {
+    const res = await Axios.delete(`${API_ROUTES.COMBO}/delete/${id}`);
     return res;
   } catch (error) {
     console.log(error);

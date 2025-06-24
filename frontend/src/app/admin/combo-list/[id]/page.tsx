@@ -1,12 +1,12 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
 import { SERVER_URL } from "@/constant";
-import { postCombo, updateCombo } from "@/lib/api/apiService";
+import { getComboById, postCombo, updateCombo } from "@/lib/api/apiService";
 import toast from "react-hot-toast";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const page = ({ params }: { params: { id: string } }) => {
   const queryClient = useQueryClient();
@@ -17,6 +17,27 @@ const page = ({ params }: { params: { id: string } }) => {
   const [price, setPrice] = useState(1);
   const [selectedItemForCombo, setSelectedItemForCombo] = useState([]);
   const [image, setImage] = useState<any>([]);
+  const [comboDetails, setComboDetails] = useState<any>(null);
+
+  // Queries
+  const { data } = useQuery({
+    queryKey: ["comboDetails"],
+    notifyOnChangeProps: ["data"],
+    staleTime: Infinity,
+    queryFn: () => getComboById(comboId),
+    select(data) {
+      return data?.data[0];
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setComboDetails(data);
+      setComboName(data?.combo_name);
+      setPrice(data?.combo_price);
+      setSelectedItemForCombo(data?.product_details);
+    }
+  }, [data]);
 
   const handleFileChange = (e: any) => {
     const files = Array.from(e.target.files);
@@ -29,14 +50,16 @@ const page = ({ params }: { params: { id: string } }) => {
   };
 
   const handlePost = async () => {
-    const payload = {
-      combo_name: comboName,
-      combo_price: price,
-      product_ids: selectedItemForCombo.map((product: any) => product.id),
-    };
-    handleDeleteCategory(payload);
+    const product_ids = selectedItemForCombo.map((product: any) => product.id);
+    const formData = new FormData();
+    formData.append("combo_name", comboName);
+    formData.append("combo_price", String(price));
+    formData.append("product_ids", JSON.stringify(product_ids));
+    formData.append("combo_image_url", image[0]?.file);
+
+    handleDeleteCategory(formData);
   };
-  
+
   const { mutate: handleDeleteCategory } = useMutation({
     mutationFn: (payload: any) => {
       if (comboId) {
@@ -72,7 +95,7 @@ const page = ({ params }: { params: { id: string } }) => {
         </div>
         <div className="flex items-center gap-5">
           <Link
-            href="/admin/product-list"
+            href="/admin/combo-list"
             className=" border border-white text-black min-w-32 py-2 rounded-3xl w-full text-center hover:bg-gray-900 hover:border-gray-900 hover:text-white"
           >
             Cancel
@@ -149,11 +172,14 @@ const page = ({ params }: { params: { id: string } }) => {
           </div>
         </div>
       </section>
-      <ProductMaptoCategory
-        open={open}
-        setOpen={setOpen}
-        setSelectedItemForCombo={setSelectedItemForCombo}
-      />
+      {open && (
+        <ProductMaptoCategory
+          open={open}
+          setOpen={setOpen}
+          selectedItemForCombo={selectedItemForCombo}
+          setSelectedItemForCombo={setSelectedItemForCombo}
+        />
+      )}
     </div>
   );
 };
