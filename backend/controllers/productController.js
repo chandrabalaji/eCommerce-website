@@ -1,10 +1,9 @@
 import path from "path";
 import fs from "fs";
 import { db } from "../config/db.js";
-import { validateRequiredFields } from "../utils/validateFields.js";
 import { __dirname } from "../constant.js";
 
-const requiredFields = ["name", "price", "category_id"];
+
 
 export const getProducts = async (req, res) => {
   const { offset, limit } = req.query;
@@ -193,16 +192,6 @@ export const addProduct = async (req, res) => {
   const todayDealValue = JSON.parse(req.body.is_today_deal);
   const productImages = req.files;
 
-  const validation = validateRequiredFields(req.body, requiredFields);
-
-  if (!validation.valid) {
-    return res.status(400).json({
-      error: "Some fields are missing",
-      missingFields: validation?.missingFields,
-      status: 400,
-    });
-  }
-
   const sql =
     "INSERT INTO products(name,price,category_id,is_today_deal) VALUES (?,?,?,?)";
 
@@ -248,16 +237,6 @@ export const updateProduct = async (req, res) => {
     return res
       .status(400)
       .json({ error: "Invalid  product ID. It must be a number." });
-  }
-
-  const validation = validateRequiredFields(req.body, requiredFields);
-
-  if (!validation.valid) {
-    return res.status(400).json({
-      error: "Some fields are missing",
-      missingFields,
-      status: 400,
-    });
   }
 
   const sql =
