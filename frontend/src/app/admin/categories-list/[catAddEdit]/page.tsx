@@ -10,7 +10,7 @@ import {
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 import { useQuery } from "@tanstack/react-query";
-import { SERVER_URL } from "@/constant";
+import { queryKey, SERVER_URL } from "@/constant";
 
 const page = ({ params }: { params: { catAddEdit: string } }) => {
   const editCategoryId = useSearchParams()?.get("edit") ?? null;
@@ -23,7 +23,7 @@ const page = ({ params }: { params: { catAddEdit: string } }) => {
   );
 
   const { data: productDetailsByCategory } = useQuery({
-    queryKey: ["productDetail"],
+    queryKey: [queryKey.productDetail],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getProductByCategoryId(editCategoryId),

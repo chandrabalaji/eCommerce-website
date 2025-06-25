@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { toast } from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { SERVER_URL } from "@/constant";
+import { queryKey, SERVER_URL } from "@/constant";
 
 const page = () => {
   const queryClient = useQueryClient();
@@ -14,7 +14,7 @@ const page = () => {
 
   // Queries
   const { data } = useQuery({
-    queryKey: ["categoriesDetails"],
+    queryKey: [queryKey.categoriesDetails],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getCategories(),
@@ -45,7 +45,7 @@ const page = () => {
     mutationFn: (id: number) => deleteCategory(id),
     onSuccess: (data: any) => {
       toast.success(data?.data?.message);
-      queryClient.invalidateQueries({ queryKey: ["categoriesDetails"] });
+      queryClient.invalidateQueries({ queryKey: [queryKey.categoriesDetails] });
     },
   });
 

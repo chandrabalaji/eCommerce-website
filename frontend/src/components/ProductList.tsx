@@ -8,6 +8,7 @@ import {
   getProductByCategoryId,
   getProducts,
 } from "@/lib/api/apiService";
+import { queryKey } from "@/constant";
 
 const ProductList = () => {
   const allCategoriesId = "ab@12";
@@ -18,21 +19,21 @@ const ProductList = () => {
 
   // Queries
   const { data } = useQuery({
-    queryKey: ["categoriesDetails"],
+    queryKey: [queryKey.categoriesDetails],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getCategories(),
   });
 
   const { data: productDetailsArray } = useQuery({
-    queryKey: ["productDetails", offset],
+    queryKey: [queryKey.productDetails, offset],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getProducts({ offset, limit: 20 }),
   });
 
   const { data: productDetailsByCategory } = useQuery({
-    queryKey: ["productDetailsByCategory", activeCategory],
+    queryKey: [queryKey.productDetailsByCategory, activeCategory],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => {

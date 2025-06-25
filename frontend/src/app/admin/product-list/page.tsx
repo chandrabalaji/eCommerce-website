@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { deleteProduct, getProducts } from "@/lib/api/apiService";
-import { SERVER_URL } from "@/constant";
+import { queryKey, SERVER_URL } from "@/constant";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import toast from "react-hot-toast";
 
@@ -13,7 +13,7 @@ const page = () => {
   const [productDetails, setProductDetails] = useState<any>(null);
 
   const { data } = useQuery({
-    queryKey: ["productDetails"],
+    queryKey: [queryKey.productDetail],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getProducts({ offset: 0, limit: 0 }),
@@ -27,7 +27,7 @@ const page = () => {
     mutationFn: (id: number) => deleteProduct(id),
     onSuccess: (data: any) => {
       toast.success(data?.data?.message);
-      queryClient.invalidateQueries({ queryKey: ["productDetails"] });
+      queryClient.invalidateQueries({ queryKey: [queryKey.productDetail] });
     },
   });
 

@@ -6,12 +6,13 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { useQuery } from "@tanstack/react-query";
 import { getTodayDeals } from "@/lib/api/apiService";
+import { queryKey } from "@/constant";
 
 const TodayDeals = () => {
   const [productDetails, setProductDetails] = useState<any>(null);
 
   const { data: productDetailsArray } = useQuery({
-    queryKey: ["todayDeals"],
+    queryKey: [queryKey.todayDeals],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getTodayDeals(),
@@ -56,7 +57,7 @@ const TodayDeals = () => {
         className="flex items-center overflow-auto gap-4 scroll-bar-hide"
         ref={producttemsRef}
       >
-        {productDetails?.map((product:any) => (
+        {productDetails?.map((product: any) => (
           <ProductCard product={product} />
         ))}
       </div>

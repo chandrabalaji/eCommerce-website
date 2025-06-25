@@ -18,8 +18,8 @@ export const getCombosList = async (req, res) => {
       combo_items CI ON CI.combo_id = c.combo_id 
     JOIN 
       products P ON P.id = CI.product_id 
-      GROUP BY 
-    C.combo_id, C.combo_name, C.combo_price
+    GROUP BY 
+      C.combo_id, C.combo_name, C.combo_price
     `;
 
   try {

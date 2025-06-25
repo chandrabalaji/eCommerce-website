@@ -3,7 +3,7 @@ import { useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
-import { SERVER_URL } from "@/constant";
+import { queryKey, SERVER_URL } from "@/constant";
 import { getComboById, postCombo, updateCombo } from "@/lib/api/apiService";
 import toast from "react-hot-toast";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -21,7 +21,7 @@ const page = ({ params }: { params: { id: string } }) => {
 
   // Queries
   const { data } = useQuery({
-    queryKey: ["comboDetails"],
+    queryKey: [queryKey.ComboDetail],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getComboById(comboId),
@@ -36,6 +36,7 @@ const page = ({ params }: { params: { id: string } }) => {
       setComboName(data?.combo_name);
       setPrice(data?.combo_price);
       setSelectedItemForCombo(data?.product_details);
+      setImage(data?.combo_image_url);
     }
   }, [data]);
 
@@ -71,7 +72,7 @@ const page = ({ params }: { params: { id: string } }) => {
     onSuccess: (data: any) => {
       console.log(data);
       toast.success(data?.data?.message);
-      queryClient.invalidateQueries({ queryKey: ["comboDetails"] });
+      queryClient.invalidateQueries({ queryKey: [queryKey.ComboDetail] });
     },
   });
 
@@ -167,7 +168,21 @@ const page = ({ params }: { params: { id: string } }) => {
             </div>
             <div className="flex flex-col gap-3">
               <p className="text-lg">Upload Combo Template</p>
-              <input type="file" accept="image/*" onChange={handleFileChange} />
+              {image ? (
+                <div className="border rounded shadow p-2 cursor-pointer max-w-60">
+                  <img
+                    src={`${SERVER_URL}/${image}`}
+                    alt={`preview`}
+                    className="w-full h-48 object-cover rounded object-top"
+                  />
+                </div>
+              ) : (
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                />
+              )}
             </div>
           </div>
         </div>

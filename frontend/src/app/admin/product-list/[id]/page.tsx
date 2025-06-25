@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
 import Select from "react-select";
 import { useQuery } from "@tanstack/react-query";
-import { SERVER_URL } from "@/constant";
+import { queryKey, SERVER_URL } from "@/constant";
 import CloseIcon from "@mui/icons-material/Close";
 import Switch from "@mui/material/Switch";
 
@@ -31,14 +31,14 @@ const page = ({ params }: { params: { id: string } }) => {
   const [deleteImageIds, setDeleteImageIds] = useState<any>([]);
 
   const { data } = useQuery({
-    queryKey: ["categoriesDetails"],
+    queryKey: [queryKey.categoriesDetails],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getCategories(),
   });
 
   const { data: productDetails } = useQuery({
-    queryKey: ["productDetail"],
+    queryKey: [queryKey.productDetail],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getProductById(productId),

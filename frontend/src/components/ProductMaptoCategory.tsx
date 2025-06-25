@@ -10,7 +10,7 @@ import { TransitionProps } from "@mui/material/transitions";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/lib/api/apiService";
-import { SERVER_URL } from "@/constant";
+import { queryKey, SERVER_URL } from "@/constant";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -33,7 +33,7 @@ const ProductMaptoCategory = ({
   );
 
   const { data } = useQuery({
-    queryKey: ["productDetails"],
+    queryKey: [queryKey.productDetails],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getProducts({ offset: 0, limit: 0 }),

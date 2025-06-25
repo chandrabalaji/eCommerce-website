@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteCombo, getCombos } from "@/lib/api/apiService";
-import { SERVER_URL } from "@/constant";
+import { queryKey, SERVER_URL } from "@/constant";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import toast from "react-hot-toast";
 
@@ -14,7 +14,7 @@ const page = () => {
 
   // Queries
   const { data } = useQuery({
-    queryKey: ["ComboDetails"],
+    queryKey: [queryKey.ComboDetails],
     notifyOnChangeProps: ["data"],
     staleTime: Infinity,
     queryFn: () => getCombos(),
@@ -29,7 +29,7 @@ const page = () => {
     mutationFn: (id: number) => deleteCombo(id),
     onSuccess: (data: any) => {
       toast.success(data?.data?.message);
-      queryClient.invalidateQueries({ queryKey: ["ComboDetails"] });
+      queryClient.invalidateQueries({ queryKey: [queryKey.ComboDetails] });
     },
   });
 
@@ -51,7 +51,7 @@ const page = () => {
           </Link>
         </div>
       </div>
-      <section className="flex items-center flex-wrap gap-4 sm:gap-8 h-[calc(100vh-180px)] overflow-y-auto scroll-bar-hide ">
+      <section className="flex  flex-wrap gap-4 sm:gap-8 h-[calc(100vh-180px)] overflow-y-auto scroll-bar-hide mt-10">
         {comboDetails?.map((combo: any) => (
           <Link
             className="w-[160px] h-72 sm:w-[300px] sm:h-96 relative rounded-md overflow-hidden shadow-lg"
