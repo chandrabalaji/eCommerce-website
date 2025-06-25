@@ -282,6 +282,7 @@ export const deleteCombo = async (req, res) => {
   });
 };
 
+// unused route
 export const removeProductFromCombo = async (req, res) => {
   const { comboId, productId } = req.params;
 

@@ -12,12 +12,12 @@ const OffersGridSection = () => {
   return (
     <div className={` cutom-offer-grid-style max-w-5xl mx-auto my-16`}>
       <div className="span-2 flex items-center font-rollgates bg-[#efefef]">
-        <div className="relative w-full h-52 ">
+        <div className="relative w-full h-52 overflow-hidden">
           <Image
             alt=""
             src="/offerSections/offer1.png"
             fill
-            className=" object-cover"
+            className=" object-cover hover:scale-110 transition-all ease-in-out duration-300 "
           />
         </div>
         <div
@@ -40,7 +40,7 @@ const OffersGridSection = () => {
             alt=""
             fill
             src="/offerSections/offer2.png"
-            className="object-cover !-left-20 "
+            className="object-cover !-left-20  hover:scale-110 transition-all ease-in-out duration-300"
           />
         </div>
         <div
@@ -56,7 +56,7 @@ const OffersGridSection = () => {
             alt=""
             fill
             src="/offerSections/offer3.jpg"
-            className="object-cover !top-6"
+            className="object-cover !top-6 hover:scale-110 transition-all ease-in-out duration-300"
           />
         </div>
         <div
@@ -94,7 +94,7 @@ const OffersGridSection = () => {
             alt=""
             src="/offerSections/offer4.png"
             fill
-            className="object-cover "
+            className="object-cover hover:scale-110 transition-all ease-in-out duration-300"
           />
         </div>
       </div>
@@ -115,7 +115,7 @@ const OffersGridSection = () => {
             alt=""
             src="/offerSections/offer5.png"
             fill
-            className="object-cover !left-36"
+            className="object-cover !left-36 hover:scale-110 transition-all ease-in-out duration-300"
           />
         </div>
       </div>

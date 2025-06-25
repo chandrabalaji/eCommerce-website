@@ -1,10 +1,22 @@
-import React from "react";
+"use client";
+import React, { useEffect, useRef } from "react";
 import Image from "next/image";
+import { motion, useInView } from "framer-motion";
 
 const LimitedTimeOffers = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+
   return (
     <div className="my-14">
-      <div className="relative w-full h-[700px]">
+      <motion.div
+        className="relative w-full h-[700px] "
+        ref={ref}
+        initial={{ opacity: 0, y: 50 }}
+        animate={isInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        style={{ minHeight: "50vh", margin: "100px 0" }}
+      >
         <Image
           src="/offerSections/limitedOffer.jpg"
           fill
@@ -23,7 +35,7 @@ const LimitedTimeOffers = () => {
             Shop Now
           </button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
