@@ -17,3 +17,5 @@ export const queryKey = {
   ComboDetail: "ComboDetail",
   todayDeals: " todayDeals",
 };
+
+export  const allCategoriesId = "ab@12";

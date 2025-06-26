@@ -39,7 +39,7 @@ const Add = () => {
             miss it
           </div>
         </div>
-        <button className="w-36 text-sm rounded-3xl ring-1 ring-pink-500 text-pink-500 py-2 px-4 hover:bg-pink-500 hover:text-white disabled:cursor-not-allowed disabled:bg-pink-200 disabled:ring-0 disabled:text-white disabled:ring-none">
+        <button className="w-36 text-sm rounded-3xl ring-1 ring-orange-400 text-orange-400 py-2 px-4 hover:bg-orange-400 hover:text-white disabled:cursor-not-allowed disabled:bg-pink-200 disabled:ring-0 disabled:text-white disabled:ring-none">
           Add to Cart
         </button>
       </div>

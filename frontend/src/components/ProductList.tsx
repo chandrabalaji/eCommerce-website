@@ -7,10 +7,9 @@ import {
   getProductByCategoryId,
   getProducts,
 } from "@/lib/api/apiService";
-import { queryKey } from "@/constant";
+import { allCategoriesId, queryKey } from "@/constant";
 
 const ProductList = () => {
-  const allCategoriesId = "ab@12";
   const [categoriesDetails, setCategoriesDetails] = useState<any>(null);
   const [activeCategory, setActiveCategory] = useState<any>(allCategoriesId);
   const [productDetails, setProductDetails] = useState<any>([]);
