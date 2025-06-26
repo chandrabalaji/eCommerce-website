@@ -1,24 +1,23 @@
 "use client";
 import ProductMaptoCategory from "@/components/ProductMaptoCategory";
-import Link from "next/link";
-import React, { useEffect, useRef, useState } from "react";
-import {
-  getCategories,
-  getProductById,
-  postCategory,
-  postProduct,
-  updateCategory,
-  updateProduct,
-} from "../../../../lib/api/apiService";
-import { useSearchParams } from "next/navigation";
-import { toast } from "react-hot-toast";
-import Select from "react-select";
-import { useQuery } from "@tanstack/react-query";
 import { queryKey, SERVER_URL } from "@/constant";
 import CloseIcon from "@mui/icons-material/Close";
 import Switch from "@mui/material/Switch";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-hot-toast";
+import Select from "react-select";
+import {
+  getCategories,
+  getProductById,
+  postProduct,
+  updateProduct
+} from "../../../../lib/api/apiService";
 
 const page = ({ params }: { params: { id: string } }) => {
+  const queryClient = useQueryClient();
   const productId = useSearchParams()?.get("edit") ?? null;
   const label = { inputProps: { "aria-label": "Switch demo" } };
 
@@ -44,35 +43,44 @@ const page = ({ params }: { params: { id: string } }) => {
     queryFn: () => getProductById(productId),
   });
 
+  const { mutate: handleproductMutation } = useMutation({
+    mutationFn: (payload: any) => {
+      if (productId) {
+        return updateProduct(payload, productId);
+      } else {
+        return postProduct(payload);
+      }
+    },
+    onSuccess: (data: any) => {
+      toast.success(data?.data?.message);
+      queryClient.invalidateQueries({ queryKey: [queryKey.productDetails] });
+    },
+  });
+
   const handlePost = async () => {
     const formData = new FormData();
     formData.append("name", productName);
     formData.append("price", String(price));
     formData.append("category_id", selectedCategory?.id);
     formData.append("is_today_deal", JSON.stringify(todatDealStatus));
+
     if (deleteImageIds.length) {
       formData.append("delete_images_ids", JSON.stringify(deleteImageIds));
     }
+    
     if (productId) {
       for (let i = 0; i < images.length; i++) {
         if (images[i]?.file) {
           formData.append("productImages", images[i]?.file); // 'images' is the key for multiple files
         }
       }
-      const { status, data }: any = await updateProduct(formData, productId);
-
-      if (status === 200) {
-        toast.success(data?.message);
-      }
+      handleproductMutation(formData);
     } else {
       for (let i = 0; i < images.length; i++) {
         formData.append("productImages", images[i]?.file); // 'images' is the key for multiple files
       }
-      const { data, status }: any = await postProduct(formData);
 
-      if (status === 201) {
-        toast.success(data?.message);
-      }
+      handleproductMutation(formData);
     }
   };
 

@@ -70,7 +70,6 @@ const page = ({ params }: { params: { id: string } }) => {
       }
     },
     onSuccess: (data: any) => {
-      console.log(data);
       toast.success(data?.data?.message);
       queryClient.invalidateQueries({ queryKey: [queryKey.ComboDetail] });
     },

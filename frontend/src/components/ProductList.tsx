@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
-
 import { useQuery } from "@tanstack/react-query";
 import {
   getCategories,

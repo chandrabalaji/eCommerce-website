@@ -9,10 +9,11 @@ import {
 } from "../../../../lib/api/apiService";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKey, SERVER_URL } from "@/constant";
 
 const page = ({ params }: { params: { catAddEdit: string } }) => {
+  const queryClient = useQueryClient();
   const editCategoryId = useSearchParams()?.get("edit") ?? null;
   const editCategoryName = params?.catAddEdit;
 
@@ -29,24 +30,30 @@ const page = ({ params }: { params: { catAddEdit: string } }) => {
     queryFn: () => getProductByCategoryId(editCategoryId),
   });
 
+  const { mutate: handlePostCategory } = useMutation({
+    mutationFn: (payload: any) => {
+      if (editCategoryId) {
+        return updateCategory(payload);
+      } else {
+        return postCategory(payload);
+      }
+    },
+    onSuccess: (data: any) => {
+      toast.success(data?.data?.message);
+      queryClient.invalidateQueries({ queryKey: [queryKey.categoriesDetails] });
+    },
+  });
+
   const handlePost = async () => {
     if (editCategoryId) {
-      const { status, data }: any = await updateCategory({
+      handlePostCategory({
         id: editCategoryId,
         name: categoryName,
       });
-
-      if (status === 200) {
-        toast.success(data?.message);
-      }
     } else {
-      const { data, status }: any = await postCategory({
+      handlePostCategory({
         name: categoryName,
       });
-
-      if (status === 201) {
-        toast.success(data?.message);
-      }
     }
   };
 

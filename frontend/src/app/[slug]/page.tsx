@@ -42,7 +42,7 @@ const SinglePage = ({ params }: { params: { slug: string } }) => {
           <h3 className="text-xl text-gray-500 line-through">
             {Number(productDetails?.price) + 300}
           </h3>
-          <h2 className="font-medium text-2xl">{productDetails.price}</h2>
+          <h2 className="font-medium text-2xl">{productDetails?.price}</h2>
         </div>
         <div className="h-[2px] bg-gray-100" />
         <CustomizeProduct />
