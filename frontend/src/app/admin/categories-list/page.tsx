@@ -85,7 +85,7 @@ const page = () => {
               <p className="text-lg sm:text-2xl font-medium text-white ">
                 {category.name}
               </p>
-              <p>No of Products : 10</p>
+              <p>No of Products : {category?.product_count}</p>
             </div>
             <button
               className="bg-red-500 p-2 rounded-full absolute right-2 top-2 opacity-0 hover:opacity-100"

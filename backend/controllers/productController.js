@@ -3,8 +3,6 @@ import fs from "fs";
 import { db } from "../config/db.js";
 import { __dirname } from "../constant.js";
 
-
-
 export const getProducts = async (req, res) => {
   const { offset, limit } = req.query;
 
@@ -15,6 +13,7 @@ export const getProducts = async (req, res) => {
     p.id,
     p.price,
     p.category_id,
+    p.color,
      JSON_ARRAYAGG(
      JSON_OBJECT(
         'id',IMG.id,
@@ -66,6 +65,7 @@ export const getProduct = async (req, res) => {
     p.id,
     p.price,
     p.is_today_deal,
+    p.color,
     p.category_id,
      JSON_ARRAYAGG(
       JSON_OBJECT(
@@ -87,7 +87,7 @@ export const getProduct = async (req, res) => {
     p.id 
     `;
   if (isNaN(id)) {
-   return res.status(400).json({
+    return res.status(400).json({
       error: "Invalid  product ID. It must be a number.",
     });
   }
@@ -188,12 +188,12 @@ export const getProductsByCategoryId = async (req, res) => {
 export const addProduct = async (req, res) => {
   // Add logic
   //name price category_id
-  const { name, price, category_id } = req.body;
+  const { name, price, category_id, color } = req.body;
   const todayDealValue = JSON.parse(req.body.is_today_deal);
   const productImages = req.files;
 
   const sql =
-    "INSERT INTO products(name,price,category_id,is_today_deal) VALUES (?,?,?,?)";
+    "INSERT INTO products(name,price,category_id,is_today_deal,color) VALUES (?,?,?,?,?)";
 
   try {
     const [productResult] = await db.query(sql, [
@@ -201,6 +201,7 @@ export const addProduct = async (req, res) => {
       price,
       category_id,
       todayDealValue,
+      color,
     ]);
 
     const productId = productResult.insertId;
@@ -227,7 +228,7 @@ export const addProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
   // Update logic
   const { id } = req.params;
-  const { name, price, category_id } = req.body;
+  const { name, price, category_id, color } = req.body;
   const todayDealValue = JSON.parse(req.body.is_today_deal);
   const product_images = req.files;
   const deleteImageIds = JSON.parse(req.body.delete_images_ids || "[]");
@@ -240,7 +241,7 @@ export const updateProduct = async (req, res) => {
   }
 
   const sql =
-    "UPDATE products SET name = ? , price = ? , category_id = ? , is_today_deal = ? WHERE id = ?";
+    "UPDATE products SET name = ? , price = ? , category_id = ? , is_today_deal = ?, color = ?  WHERE id = ?";
 
   try {
     const [updateProductResult] = await db.query(sql, [
@@ -248,6 +249,7 @@ export const updateProduct = async (req, res) => {
       price,
       category_id,
       todayDealValue,
+      color,
       id,
     ]);
 

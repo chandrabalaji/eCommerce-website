@@ -1,18 +1,25 @@
+"use client";
 import React from "react";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Image from "next/image";
 import Link from "next/link";
 import { SERVER_URL } from "@/constant";
 import StarRateIcon from "@mui/icons-material/StarRate";
+import { usePathname } from "next/navigation";
 
 const ProductCard = ({ product }: any) => {
+  const pathname = usePathname();
+  const isShopPage = pathname === "/shop";
+
   return (
     <Link
       href="/test"
-      className="flex flex-col gap-4 min-w-72 max-w-72   p-3 rounded-md"
+      className={`flex flex-col gap-4 min-w-72 max-w-72 p-3 rounded-md  ${
+        isShopPage && "min-w-[187px] max-w-[187px] 2xl:min-w-72 2xl:max-w-72   gap-0 p-0"
+      }`}
       key={product.id}
     >
-      <div className="relative w-full h-96">
+      <div className="relative w-full h-60  xl:h-96">
         <Image
           src={
             product?.image_urls?.[0]
@@ -57,8 +64,8 @@ const ProductCard = ({ product }: any) => {
             />
           </span>
         </div>
-        <p className=" text-xl font-semibold font-josefin">{product?.name}</p>
-        <p className="text-xl font-bold text-orange-400 font-josefin">
+        <p className="text-base sm:text-xl font-semibold font-josefin">{product?.name}</p>
+        <p className="text-base sm:text-xl font-bold text-orange-400 font-josefin">
           <span className="line-through opacity-65">
             $ {Number(product?.price) + 300}
           </span>{" "}

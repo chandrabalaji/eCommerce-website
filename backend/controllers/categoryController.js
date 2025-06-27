@@ -11,10 +11,23 @@ export const getCategories = async (req, res) => {
     FROM categories c
     LEFT JOIN products p ON c.id = p.category_id
     LEFT JOIN product_images pi ON p.id = pi.product_id
+  ),
+  ProductCounts AS (
+    SELECT 
+      c.id AS category_id,
+      COUNT(p.id) AS product_count
+    FROM categories c 
+    LEFT JOIN products p ON c.id = p.category_id
+    GROUP BY c.id
   )
-  SELECT id, name,image_url
-  FROM Rankedimages
-  WHERE rn = 1 OR rn IS NULL
+  SELECT 
+    r.id, 
+    r.name,
+    r.image_url,
+    COALESCE(pc.product_count,0) AS product_count
+  FROM Rankedimages r
+  LEFT JOIN ProductCounts pc ON r.id = pc.category_id
+  WHERE r.rn = 1 OR r.rn IS NULL
   `;
 
   try {

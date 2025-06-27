@@ -22,7 +22,7 @@ const Navbar = () => {
           </Link>
           <div className="hidden xl:flex gap-12 font-josefin">
             <Link href="/" className="text-orange-400">Homepage</Link>
-            <Link href="/">Shop</Link>
+            <Link href="/shop">Shop</Link>
             <Link href="/">Accessories</Link>
             <Link href="/">Combo</Link>
             <Link href="/">Contact us</Link>

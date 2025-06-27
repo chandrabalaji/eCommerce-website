@@ -13,7 +13,7 @@ import {
   getCategories,
   getProductById,
   postProduct,
-  updateProduct
+  updateProduct,
 } from "../../../../lib/api/apiService";
 
 const page = ({ params }: { params: { id: string } }) => {
@@ -26,6 +26,7 @@ const page = ({ params }: { params: { id: string } }) => {
   const [productName, setProductName] = useState("Product 1");
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [price, setPrice] = useState(1);
+  const [color, setColor] = useState("");
   const [images, setImages] = useState<any>([]);
   const [deleteImageIds, setDeleteImageIds] = useState<any>([]);
 
@@ -63,11 +64,12 @@ const page = ({ params }: { params: { id: string } }) => {
     formData.append("price", String(price));
     formData.append("category_id", selectedCategory?.id);
     formData.append("is_today_deal", JSON.stringify(todatDealStatus));
+    formData.append("color", color);
 
     if (deleteImageIds.length) {
       formData.append("delete_images_ids", JSON.stringify(deleteImageIds));
     }
-    
+
     if (productId) {
       for (let i = 0; i < images.length; i++) {
         if (images[i]?.file) {
@@ -111,6 +113,7 @@ const page = ({ params }: { params: { id: string } }) => {
       setPrice(productDetail?.price);
       setImages(productDetail?.image_urls || []);
       setTodayDealStatus(Boolean(Number(productDetail?.is_today_deal)));
+      setColor(productDetail?.color)
     }
   }, [productDetails]);
 
@@ -240,13 +243,30 @@ const page = ({ params }: { params: { id: string } }) => {
                 onChange={(e) => setSelectedCategory(e)}
               />
             </div>
-            <div>
-              <label>Mark as Today Deal</label>
-              <Switch
-                {...label}
-                checked={todatDealStatus}
-                onChange={(e: any) => setTodayDealStatus(e.target.checked)}
-              />
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col gap-3">
+                <p className="text-lg">Product Color</p>
+                <div className="flex items-center">
+                  <div
+                    className="w-10 h-[42px] rounded-l-md"
+                    style={{ backgroundColor: color || '#9ca3af ' }}
+                  ></div>
+                  <input
+                    type="text"
+                    className=" border border-gray-400 p-2 rounded-r-md w-full"
+                    value={color}
+                    onChange={(e) => setColor(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="self-end">
+                <label>Mark as Today Deal</label>
+                <Switch
+                  {...label}
+                  checked={todatDealStatus}
+                  onChange={(e: any) => setTodayDealStatus(e.target.checked)}
+                />
+              </div>
             </div>
           </div>
         </div>

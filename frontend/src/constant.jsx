@@ -18,4 +18,5 @@ export const queryKey = {
   todayDeals: " todayDeals",
 };
 
-export  const allCategoriesId = "ab@12";
+export const allCategoriesId = "ab@12";
+export const limit = 20;
